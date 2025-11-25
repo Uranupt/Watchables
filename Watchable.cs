@@ -16,9 +16,9 @@ namespace Watchables
 		/// Whether this <see cref="Watchable"/> currently has a defined owner. If this is true, the owner is required to
 		/// call <see cref="TryDestroy"/> and <see cref="TryClearListeners"/>.
 		/// </summary>
-		public bool IsOwned => _owner != null;
+		public virtual bool IsOwned => _owner != null;
 		/// <summary> Whether this <see cref="Watchable"/> has already been destroyed. </summary>
-		public bool IsDestroyed { get; private set; } = false;
+		public virtual bool IsDestroyed { get; private set; } = false;
     /// <summary> The event fired when the underlying value changes. </summary>
     public event Action Changed;
     /// <summary> The event fired when <see cref="TryDestroy"/> is successfully called. </summary>
@@ -28,7 +28,7 @@ namespace Watchables
 		/// Attempts to clear the <see cref="Watchable"/>'s value and listeners and mark it destroyed. 
 		/// Requires the owner to be passed if <see cref="IsOwned"/> is true. Calls <see cref="Destroyed"/> when done.
 		/// </summary>
-		public bool TryDestroy(object owner = null)
+		public virtual bool TryDestroy(object owner = null)
 		{
 			if((_owner != null && owner != _owner) || IsDestroyed) { return false; }
 			_owner = null;
@@ -43,7 +43,7 @@ namespace Watchables
 		/// <summary>
 		/// Attempts to set the <see cref="Watchable"/>'s owner. Only succeeds if there is no current owner.
 		/// </summary>
-		public bool TrySetOwner(object owner)
+		public virtual bool TrySetOwner(object owner)
 		{
 			if(_owner != null || owner == null){ return false; }
 			_owner = owner;
@@ -53,7 +53,7 @@ namespace Watchables
 		/// <summary>
 		/// Attempts to clear the <see cref="Watchable"/>'s owner. Requires the current owner to be passed.
 		/// </summary>
-		public bool TryClearOwner(object owner)
+		public virtual bool TryClearOwner(object owner)
 		{
 			if(_owner != owner) { return false; }
 			_owner = null;
@@ -63,7 +63,7 @@ namespace Watchables
     /// <summary>
     /// Attempts to clear all listeners from <see cref="Changed"/>. Requires the owner to be passed if <see cref="IsOwned"/> is true.
     /// </summary>
-    public bool TryClearListeners(object owner = null)
+    public virtual bool TryClearListeners(object owner = null)
 		{
       if(_owner != null && _owner != owner) { return false; }
 			Changed = null;

@@ -10,7 +10,7 @@ namespace Watchables
 	public abstract class Watchable<T> : Watchable
 	{
 
-		private ReadOnlyWatchable<T> _readOnlyWrapper;
+		protected ReadOnlyWatchable<T> _readOnlyWrapper;
 
 		protected T _value;
 

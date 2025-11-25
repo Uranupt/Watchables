@@ -11,7 +11,8 @@ namespace Watchables
 	{
 
 		private object _owner;
-
+		private bool _isUpdating;
+		
 		/// <summary> 
 		/// Whether this <see cref="Watchable"/> currently has a defined owner. If this is true, the owner is required to
 		/// call <see cref="TryDestroy"/> and <see cref="TryClearListeners"/>.
@@ -28,24 +29,19 @@ namespace Watchables
 		/// Attempts to clear the <see cref="Watchable"/>'s value and listeners and mark it destroyed. 
 		/// Requires the owner to be passed if <see cref="IsOwned"/> is true. Calls <see cref="Destroyed"/> when done.
 		/// </summary>
-		public virtual bool TryDestroy(object owner = null)
+		public virtual bool Destroy(object owner = null)
 		{
 			if((_owner != null && owner != _owner) || IsDestroyed) { return false; }
-			_owner = null;
-			IsDestroyed = true;
-			ClearValue();
-			TryClearListeners(owner);
-			Destroyed?.Invoke(this);
-			Destroyed = null;
+			DestroyProtected();
 			return true;
 		}
 
 		/// <summary>
 		/// Attempts to set the <see cref="Watchable"/>'s owner. Only succeeds if there is no current owner.
 		/// </summary>
-		public virtual bool TrySetOwner(object owner)
+		public virtual bool SetOwner(object owner)
 		{
-			if(_owner != null || owner == null){ return false; }
+			if(_owner != null || owner == null || IsDestroyed){ return false; }
 			_owner = owner;
 			return true;
 		}
@@ -53,29 +49,51 @@ namespace Watchables
 		/// <summary>
 		/// Attempts to clear the <see cref="Watchable"/>'s owner. Requires the current owner to be passed.
 		/// </summary>
-		public virtual bool TryClearOwner(object owner)
+		public virtual bool ClearOwner(object owner)
 		{
-			if(_owner != owner) { return false; }
+			if(_owner != owner || IsDestroyed) { return false; }
 			_owner = null;
 			return true;
 		}
-
-    /// <summary>
-    /// Attempts to clear all listeners from <see cref="Changed"/>. Requires the owner to be passed if <see cref="IsOwned"/> is true.
-    /// </summary>
-    public virtual bool TryClearListeners(object owner = null)
-		{
-      if(_owner != null && _owner != owner) { return false; }
-			Changed = null;
-			return true;
-    }
 
 		/// <summary> Converts the underlying value to a string. </summary>
 		public new abstract string ToString();
 
 		protected abstract void ClearValue();
 
-		protected void InvokeChanged() => Changed?.Invoke();
+		protected void InvokeChanged()
+		{
+			if(IsDestroyed) { return; }
+			if(_isUpdating)
+			{
+				throw new InvalidOperationException("Update feeback loop found.");
+			}
+			try
+			{
+				_isUpdating = true;
+				Changed?.Invoke();
+			}
+			finally
+			{
+				_isUpdating = false;
+			}
+		}
+
+		protected void DestroyProtected()
+		{
+			ClearListenersProtected();
+			_owner = null;
+			IsDestroyed = true;
+			ClearValue();
+			Destroyed?.Invoke(this);
+			Destroyed = null;
+		}
+
+		protected void ClearListeners()
+		{
+			Changed = null;
+			Destroyed = null;
+		}
 
 	}
 }

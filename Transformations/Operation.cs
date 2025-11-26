@@ -1,6 +1,6 @@
 
 
-namespace Watchables.Transformations
+namespace Watchables
 {
   public enum Operation
   {

@@ -5,24 +5,52 @@ namespace Watchables
 	public abstract class NestedWatchable<T> : Watchable<T>
 	{
 
-		private ReadOnlyWatchable<T> _readOnly;
-
-		public override Watchable<T> ReadOnlyWrapper
+		protected NestedWatchable()
 		{
-			get
+			Destroyed += OnDestroy;
+		}
+
+		protected void Register(IWatchable dependency)
+		{
+			Unregister(dependency);
+			dependency.Changed += OnDependencyChanged;
+			dependency.Destroyed += OnDependencyDestroyed;
+		}
+
+		protected void Unregister(IWatchable dependency)
+		{
+      dependency.Changed -= OnDependencyChanged;
+      dependency.Destroyed -= OnDependencyDestroyed;
+    }
+
+		protected virtual void OnDependencyChanged()
+		{
+			if(IsDestroyed) { return; }
+			Evaluate();
+			InvokeChanged();
+		}
+
+		protected virtual void OnDependencyDestroyed(IWatchable dependency)
+		{
+			if(CheckFatalDestruction(dependency))
 			{
-				_readOnly ??= new ReadOnlyWatchable<T>(this);
-				return _readOnly;
+				DestroyProtected();
+			}
+			else
+			{
+				Unregister(dependency);
+        OnNonFatalDestruction(dependency);
 			}
 		}
 
-		protected abstract void Evaluate();
-
-		public override T ToValue()
+		protected virtual void OnNonFatalDestruction(IWatchable dependency)
 		{
-			Evaluate();
-			return _value;
+
 		}
+
+		protected abstract void Evaluate();
+		protected abstract bool CheckFatalDestruction(IWatchable dependency);
+		protected abstract void OnDestroy(IWatchable self);
 
 	}
 }

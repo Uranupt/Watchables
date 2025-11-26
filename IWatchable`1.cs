@@ -3,13 +3,11 @@
 namespace Watchables
 {
   /// <summary>
-  /// Generic extension interface of <see cref="IWatchable"/>
+  /// Base generic interface for the Watchable system which combines <see cref="IWatchable"/> and <see cref="IValueWrapper{T}"/>.
   /// </summary>
-  public interface IWatchable<T> : IWatchable
+  public interface IWatchable<T> : IWatchable, IValueWrapper<T>
   {
 
-    /// <summary> Retrieve the underlying value of Type <typeparamref name="T"/>. </summary>
-    T ToValue();
 
   }
 }

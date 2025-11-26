@@ -6,27 +6,6 @@ namespace Watchables
 	public class SimpleWatchable<T> : Watchable<T>
 	{
 
-		private ReadOnlyWatchable<T> _readOnly;
-		private event Action Changed;
-
-		public override Watchable<T> ReadOnlyWrapper
-		{
-			get
-			{
-				_readOnly ??= new ReadOnlyWatchable<T>(this);
-				return _readOnly;
-			}
-		}
-
-		public T Value
-		{
-			get { return _value; }
-			set
-			{
-				_value = value;
-				Changed?.Invoke();
-			}
-		}
 
 		public SimpleWatchable()
 		{
@@ -35,18 +14,16 @@ namespace Watchables
 
 		public SimpleWatchable(T value)
 		{
-			Value = value;
+      _value = value;
 		}
 
-		public override void AddListener(Action listener)
+		public bool SetValue(T value, object owner = null)
 		{
-			Changed -= listener;
-			Changed += listener;
+			if(IsDestroyed || (IsOwned && !CompareToOwner(owner)){ return false; }
+			_value = value;
+			InvokeChanged();
+			return true;
 		}
 
-		public override void RemoveListener(Action listener)
-		{
-			Changed -= listener;
-		}
 	}
 }

@@ -1,7 +1,7 @@
 using System;
 
 
-namespace Watchables.Transformations
+namespace Watchables
 {
 	public class MultiplicationTransformation : NestedWatchable<float>
 	{

@@ -6,20 +6,9 @@ namespace Watchables
 	public class Requestable : Watchable<bool>
 	{
 
-		private readonly List<object> _requesters = new();
-		private ReadOnlyWatchable<bool> _readOnly;
-		private event Action Changed;
+		private readonly HashSet<object> _requesters = new();
 
 		public readonly bool DefaultState;
-
-		public override Watchable<bool> ReadOnlyWrapper
-		{
-			get
-			{
-				_readOnly ??= new ReadOnlyWatchable<bool>(this);
-				return _readOnly;
-			}
-		}
 
 		public Requestable(bool defaultState)
 		{
@@ -29,43 +18,34 @@ namespace Watchables
 
 		public void AddRequest(object requester)
 		{
-			if(_requesters.Contains(requester)) return;
-			_requesters.Add(requester);
-			Evaluate();
+			if(_requesters.Add(requester))
+			{
+        Evaluate();
+      }			
 		}
 
 		public void RemoveRequest(object requester)
 		{
-			if(!_requesters.Contains(requester)) return;
-			_requesters.Remove(requester);
-			Evaluate();
-		}
+      if(_requesters.Remove(requester))
+      {
+        Evaluate();
+      }
+    }
 
 		public void Clear()
 		{
 			_requesters.Clear();
 			_value = DefaultState;
-			Changed?.Invoke();
+			InvokeChanged();
 		}
 
 		private void Evaluate()
 		{
 			bool state = DefaultState ? _requesters.Count == 0 : _requesters.Count > 0;
 			if(state == _value) { return; }
-
 			_value = state;
-			Changed?.Invoke();
-		}
+      InvokeChanged();
+    }
 
-		public override void AddListener(Action listener)
-		{
-			Changed -= listener;
-			Changed += listener;
-		}
-
-		public override void RemoveListener(Action listener)
-		{
-			Changed -= listener;
-		}
 	}
 }

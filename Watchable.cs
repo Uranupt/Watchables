@@ -9,8 +9,8 @@ namespace Watchables
 	public abstract class Watchable : IWatchable
 	{
 
-		private object _owner;
-		private bool _isUpdating;
+		protected object _owner;
+    protected bool _isUpdating;
 
 		public bool IsOwned => _owner != null;
 		public bool IsDestroyed { get; private set; } = false;
@@ -38,7 +38,11 @@ namespace Watchables
 			return true;
 		}
 
+		public bool CompareToOwner(object owner) => IsOwned && _owner == owner;
+
 		protected abstract void ClearValue();
+
+		protected bool CanEdit(object owner) => !IsDestroyed && (!IsOwned || _owner == owner);
 
 		protected void InvokeChanged()
 		{

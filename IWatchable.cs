@@ -28,5 +28,8 @@ namespace Watchables
     /// <summary> Attempts to clear the this instance's owner. Requires the current owner to be passed. </summary>
     bool ClearOwner(object owner);
 
+    /// <summary> Compares the given object to the instance's owner. Always returns false if there is no owner. </summary>
+    bool CompareToOwner(object owner);
+
   }
 }

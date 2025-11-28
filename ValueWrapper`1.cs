@@ -12,8 +12,8 @@ namespace Watchables
       _value = value;
     }
 
-    public static operator T(ValueWrapper<T> wrapper) => wrapper.ToValue();
-    public static operator ValueWrapper<T>(T value) => new ValueWrapper<T>(value);
+    public static implicit operator T(ValueWrapper<T> wrapper) => wrapper.ToValue();
+    public static implicit operator ValueWrapper<T>(T value) => new ValueWrapper<T>(value);
 
     public T ToValue() => _value;
     /// <summary> Returns a string representation of the underlying value. </summary>

@@ -18,7 +18,8 @@ namespace Watchables
 
 		public static implicit operator T(Watchable<T> watchable) => watchable.ToValue();
 
-		public virtual T ToValue() => _value;
+    /// <inheritdoc/>
+    public virtual T ToValue() => _value;
 		/// <summary> Returns a string representation of the underlying value. </summary>
 		public override string ToString() => ToValue().ToString();
 

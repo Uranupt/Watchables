@@ -7,7 +7,7 @@ namespace Watchables
 
 		protected NestedWatchable()
 		{
-			Destroyed += OnDestroy;
+			Destroyed += OnDestroyed;
 		}
 
 		protected void Register(IWatchable dependency)
@@ -23,14 +23,14 @@ namespace Watchables
       dependency.Destroyed -= OnDependencyDestroyed;
     }
 
-		protected virtual void OnDependencyChanged()
+		protected void OnDependencyChanged()
 		{
 			if(IsDestroyed) { return; }
 			Evaluate();
 			InvokeChanged();
 		}
 
-		protected virtual void OnDependencyDestroyed(IWatchable dependency)
+		protected void OnDependencyDestroyed(IWatchable dependency)
 		{
 			if(CheckFatalDestruction(dependency))
 			{
@@ -50,7 +50,7 @@ namespace Watchables
 
 		protected abstract void Evaluate();
 		protected abstract bool CheckFatalDestruction(IWatchable dependency);
-		protected abstract void OnDestroy(IWatchable self);
+		protected abstract void OnDestroyed(IWatchable self);
 
 	}
 }

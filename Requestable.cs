@@ -3,11 +3,16 @@ using System;
 
 namespace Watchables
 {
-	public class Requestable : Watchable<bool>
+	/// <summary>
+	/// A <see cref="Watchable{bool}"/> implementation of Type <see cref="bool"/> which allows objects to request an inversion of its default state.
+	/// So long as there are any requests, the value will be inverted.
+	/// </summary>
+	public sealed class Requestable : Watchable<bool>
 	{
 
 		private readonly HashSet<object> _requesters = new();
 
+		/// <summary> The state of this instance when there are no requests. </summary>
 		public readonly bool DefaultState;
 
 		public Requestable(bool defaultState)

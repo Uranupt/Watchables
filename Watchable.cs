@@ -12,37 +12,45 @@ namespace Watchables
 		protected object _owner;
     protected bool _isUpdating;
 
+		/// <inheritdoc/>
 		public bool IsOwned => _owner != null;
-		public bool IsDestroyed { get; private set; } = false;
+    /// <inheritdoc/>
+    public bool IsDestroyed { get; private set; } = false;
+    /// <inheritdoc/>
     public event Action Changed;
+    /// <inheritdoc/>
     public event Action<IWatchable> Destroyed;
 
-		public bool Destroy(object owner = null)
+    /// <inheritdoc/>
+    public bool Destroy(object owner = null)
 		{
 			if((_owner != null && owner != _owner) || IsDestroyed) { return false; }
 			DestroyProtected();
 			return true;
 		}
 
-		public bool SetOwner(object owner)
+    /// <inheritdoc/>
+    public bool SetOwner(object owner)
 		{
 			if(_owner != null || owner == null || IsDestroyed){ return false; }
 			_owner = owner;
 			return true;
 		}
 
-		public bool ClearOwner(object owner)
+    /// <inheritdoc/>
+    public bool ClearOwner(object owner)
 		{
-			if(_owner != owner || IsDestroyed) { return false; }
+			if(_owner != null && (_owner != owner || IsDestroyed)) { return false; }
 			_owner = null;
 			return true;
 		}
 
-		public bool CompareToOwner(object owner) => IsOwned && _owner == owner;
+    /// <inheritdoc/>
+    public bool CompareToOwner(object owner) => IsOwned && _owner == owner;
 
 		protected abstract void ClearValue();
 
-		protected bool CanEdit(object owner) => !IsDestroyed && (!IsOwned || _owner == owner);
+		protected virtual bool CanEdit(object owner) => !IsDestroyed && (!IsOwned || _owner == owner);
 
 		protected void InvokeChanged()
 		{

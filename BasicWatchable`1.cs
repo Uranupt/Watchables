@@ -29,7 +29,7 @@ namespace Watchables
 
 		public bool SetValue(T value)
 		{
-      if(IsSealed) { return false; }
+      if(IsSealed || IsDestroyed) { return false; }
       _value = value;
       return true;
     }
@@ -37,7 +37,7 @@ namespace Watchables
     /// <summary> </summary>
     public bool SetValue(T value, object owner = null)
 		{
-			if(IsDestroyed || (IsOwned && !CompareToOwner(owner))){ return false; }
+			if((IsSealed && !IsOwned) || !CanEdit(owner) { return false; }
 			_value = value;
 			InvokeChanged();
 			return true;

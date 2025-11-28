@@ -16,5 +16,7 @@ namespace Watchables
       _value = step.OperationType.Operate(_value, step.Value != null ? step.Value.ToValue() : 0f );
     }
 
+    protected override bool CheckValidOperation(OperationType op) => true;
+
   }
 }

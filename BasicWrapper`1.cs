@@ -2,7 +2,7 @@
 
 namespace Watchables
 {
-  public sealed class BasicValueWrapper<T> : IValueWrapper<T>, ISealable
+  public sealed class BasicWrapper<T> : IValueWrapper<T>, ISealable
   {
 
     private T _value;
@@ -11,17 +11,17 @@ namespace Watchables
     public bool IsSealed { get; private set; }
     public bool IsOwned { get; private set; }
 
-    public BasicValueWrapper()
+    public BasicWrapper()
     {
 
     }
 
-    public BasicValueWrapper(T value)
+    public BasicWrapper(T value)
     {
       _value = value;
     }
 
-    public static implicit operator T(BasicValueWrapper<T> wrapper) => wrapper.ToValue();
+    public static implicit operator T(BasicWrapper<T> wrapper) => wrapper.ToValue();
 
     public bool SetValue(T value)
     {

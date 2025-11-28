@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 
-
 namespace Watchables
 {
   public abstract class OpChain<T> : NestedWatchable<T>, ISealable where T : unmanaged
@@ -20,9 +19,9 @@ namespace Watchables
       }
     }
 
-    public bool AddStep(OpChainStep<T> step)
+    public bool AddStep(OpChainStep<T> step, object owner = null)
     {
-      if(IsSealed || IsDestroyed) { return false; }
+      if(!IsEditAllowed(owner) || !CheckValidOperation(step.OperationType)) { return false; }
       _steps.Add(step);
       if(step.Value != null && step.Value is IWatchable)
       {
@@ -32,11 +31,19 @@ namespace Watchables
       return true;
     }
 
-    public bool AddSteps(List<OpChainStep<T>> steps)
+    public bool AddSteps(List<OpChainStep<T>> steps, bool allValidOps = false, object owner = null)
     {
-      if(IsSealed || IsDestroyed) { return false; }
+      if(!IsEditAllowed(owner)) { return false; }
+      if(allValidOps)
+      {
+        foreach(OpChainStep<T> step in steps)
+        {
+          if(!CheckValidOperation(step.OperationType)) { return false; }
+        }
+      }
       foreach(OpChainStep<T> step in steps)
       {
+        if(!allValidOps && !CheckValidOperation(step.OperationType)) { continue; }
         _steps.Add(step);
         if(step.Value != null && step.Value is IWatchable)
         {
@@ -47,9 +54,9 @@ namespace Watchables
       return true;
     }
 
-    public bool RemoveStep(OpChainStep<T> step)
+    public bool RemoveStep(OpChainStep<T> step, object owner = null)
     {
-      if(IsSealed || IsDestroyed) { return false; }
+      if(!IsEditAllowed(owner) { return false; }
       if(!_steps.Contains(step)) { return true; } //Concept is to report whether the step is successfully gone, so if it never existed this counts as a success.
       _steps.Remove(step);
       if(step.Value != null && step.Value is IWatchable)
@@ -66,6 +73,28 @@ namespace Watchables
       IsSealed = sealedState;
       return true;
     }
+
+    public OpChain<T> Add(IValueWrapper<T> value, bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.Add(value, fatal), owner);
+    public OpChain<T> Subtract(IValueWrapper<T> value, bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.Subtract(value, fatal), owner);
+    public OpChain<T> Multiply(IValueWrapper<T> value, bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.Multiply(value, fatal), owner);
+    public OpChain<T> Divide(IValueWrapper<T> value, bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.Divide(value, fatal), owner);
+    public OpChain<T> Modulo(IValueWrapper<T> value, bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.Modulo(value, fatal), owner);
+    public OpChain<T> ToPower(IValueWrapper<T> value, bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.ToPower(value, fatal), owner);
+    public OpChain<T> AsPower(IValueWrapper<T> value, bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.AsPower(value, fatal), owner);
+    public OpChain<T> ToRoot(IValueWrapper<T> value, bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.ToRoot(value, fatal), owner);
+    public OpChain<T> AsRoot(IValueWrapper<T> value, bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.AsRoot(value, fatal), owner);
+    public OpChain<T> Minimum(IValueWrapper<T> value, bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.Minimum(value, fatal), owner);
+    public OpChain<T> Maximum(IValueWrapper<T> value, bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.Maximum(value, fatal), owner);
+    public OpChain<T> Round(bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.Round(fatal), owner);
+    public OpChain<T> Floor(bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.Floor(fatal), owner);
+    public OpChain<T> Ceiling(bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.Ceiling(fatal), owner);
+    public OpChain<T> Truncate(bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.Truncate(fatal), owner);
+    public OpChain<T> Absolute(bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.Absolute(fatal), owner);
+    public OpChain<T> AsNegative(bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.AsNegative(fatal), owner);
+    public OpChain<T> FlipSign(bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.FlipSign(fatal), owner);
+    public OpChain<T> Reciprocal(bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.Reciprocal(fatal), owner);
+
+
 
     protected override void OnNonFatalDestruction(IWatchable dependency)
     {
@@ -125,6 +154,20 @@ namespace Watchables
     }
 
     protected abstract void ApplyOperation(OpChainStep<T> step);
+    protected abstract bool CheckValidOperation(OperationType op);
+
+    private bool IsEditAllowed(object owner)
+    {
+      if(IsDestroyed) { return false; }
+      if(!IsSealed) { return true; }
+      return CompareToOwner(owner);
+    }
+
+    private OpChain<T> ChainAddStep(OpChainStep<T> step, object owner)
+    {
+      AddStep(step, owner);
+      return this;
+    }
 
   }
 }

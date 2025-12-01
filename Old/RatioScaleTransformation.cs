@@ -6,10 +6,10 @@ namespace Watchables.Transformations
 	public class RatioScaleTransformation : NestedWatchable<float>
 	{
 
-		private readonly Watchable<float> _refValue;
-		private readonly Watchable<float> _ratio;
+		private readonly WatchableBase<float> _refValue;
+		private readonly WatchableBase<float> _ratio;
 
-		public RatioScaleTransformation(Watchable<float> refValue, Watchable<float> maximum, Watchable<float> current,
+		public RatioScaleTransformation(WatchableBase<float> refValue, WatchableBase<float> maximum, WatchableBase<float> current,
 			bool inverse = false, bool clamp = false)
 		{
 			_refValue = refValue;

@@ -5,7 +5,7 @@ namespace Watchables
   public enum CompositeOperation
   {
     Force,
-    SetFinal
+    SetFinal,
     SetBase,
     Add,
     Subtract,

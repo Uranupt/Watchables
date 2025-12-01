@@ -10,7 +10,7 @@ namespace Watchables
 
     public bool IsSealed { get; protected set; }
 
-    public OpChain(IValueWrapper<T> baseValue)
+    public OpChain(IValueWrapper<T> baseValue) : base()
     {
       _baseValue = baseValue;
       if(_baseValue is IWatchable)
@@ -56,7 +56,7 @@ namespace Watchables
 
     public bool RemoveStep(OpChainStep<T> step, object owner = null)
     {
-      if(!IsEditAllowed(owner) { return false; }
+      if(!IsEditAllowed(owner)) { return false; }
       if(!_steps.Contains(step)) { return true; } //Concept is to report whether the step is successfully gone, so if it never existed this counts as a success.
       _steps.Remove(step);
       if(step.Value != null && step.Value is IWatchable)
@@ -74,27 +74,83 @@ namespace Watchables
       return true;
     }
 
+    #region Chain Methods
+    /// <inheritdoc cref="OpChainStep{T}.Add"/> 
+    /// <param name="owner"> The owner of the chain, used only to ignore sealed state. </param>
     public OpChain<T> Add(IValueWrapper<T> value, bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.Add(value, fatal), owner);
+
+    /// <inheritdoc cref="OpChainStep{T}.Subtract"/> 
+    /// <param name="owner"> The owner of the chain, used only to ignore sealed state. </param>
     public OpChain<T> Subtract(IValueWrapper<T> value, bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.Subtract(value, fatal), owner);
+
+    /// <inheritdoc cref="OpChainStep{T}.Multiply"/> 
+    /// <param name="owner"> The owner of the chain, used only to ignore sealed state. </param>
     public OpChain<T> Multiply(IValueWrapper<T> value, bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.Multiply(value, fatal), owner);
+
+    /// <inheritdoc cref="OpChainStep{T}.Divide"/> 
+    /// <param name="owner"> The owner of the chain, used only to ignore sealed state. </param>
     public OpChain<T> Divide(IValueWrapper<T> value, bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.Divide(value, fatal), owner);
+
+    /// <inheritdoc cref="OpChainStep{T}.Modulo"/> 
+    /// <param name="owner"> The owner of the chain, used only to ignore sealed state. </param>
     public OpChain<T> Modulo(IValueWrapper<T> value, bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.Modulo(value, fatal), owner);
+
+    /// <inheritdoc cref="OpChainStep{T}.ToPower"/> 
+    /// <param name="owner"> The owner of the chain, used only to ignore sealed state. </param>
     public OpChain<T> ToPower(IValueWrapper<T> value, bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.ToPower(value, fatal), owner);
+
+    /// <inheritdoc cref="OpChainStep{T}.AsPower"/> 
+    /// <param name="owner"> The owner of the chain, used only to ignore sealed state. </param>
     public OpChain<T> AsPower(IValueWrapper<T> value, bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.AsPower(value, fatal), owner);
+
+    /// <inheritdoc cref="OpChainStep{T}.ToRoot"/> 
+    /// <param name="owner"> The owner of the chain, used only to ignore sealed state. </param>
     public OpChain<T> ToRoot(IValueWrapper<T> value, bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.ToRoot(value, fatal), owner);
+
+    /// <inheritdoc cref="OpChainStep{T}.AsRoot"/> 
+    /// <param name="owner"> The owner of the chain, used only to ignore sealed state. </param>
     public OpChain<T> AsRoot(IValueWrapper<T> value, bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.AsRoot(value, fatal), owner);
+
+    /// <inheritdoc cref="OpChainStep{T}.Minimum"/> 
+    /// <param name="owner"> The owner of the chain, used only to ignore sealed state. </param>
     public OpChain<T> Minimum(IValueWrapper<T> value, bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.Minimum(value, fatal), owner);
+
+    /// <inheritdoc cref="OpChainStep{T}.Maximum"/> 
+    /// <param name="owner"> The owner of the chain, used only to ignore sealed state. </param>
     public OpChain<T> Maximum(IValueWrapper<T> value, bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.Maximum(value, fatal), owner);
-    public OpChain<T> Round(bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.Round(fatal), owner);
-    public OpChain<T> Floor(bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.Floor(fatal), owner);
-    public OpChain<T> Ceiling(bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.Ceiling(fatal), owner);
-    public OpChain<T> Truncate(bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.Truncate(fatal), owner);
-    public OpChain<T> Absolute(bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.Absolute(fatal), owner);
-    public OpChain<T> AsNegative(bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.AsNegative(fatal), owner);
-    public OpChain<T> FlipSign(bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.FlipSign(fatal), owner);
-    public OpChain<T> Reciprocal(bool fatal = false, object owner = null) => ChainAddStep(OpChainStep<T>.Reciprocal(fatal), owner);
 
+    /// <inheritdoc cref="OpChainStep{T}.Round"/> 
+    /// <param name="owner"> The owner of the chain, used only to ignore sealed state. </param>
+    public OpChain<T> Round(object owner = null) => ChainAddStep(OpChainStep<T>.Round(), owner);
 
+    /// <inheritdoc cref="OpChainStep{T}.Floor"/> 
+    /// <param name="owner"> The owner of the chain, used only to ignore sealed state. </param>
+    public OpChain<T> Floor(object owner = null) => ChainAddStep(OpChainStep<T>.Floor(), owner);
+
+    /// <inheritdoc cref="OpChainStep{T}.Ceiling"/> 
+    /// <param name="owner"> The owner of the chain, used only to ignore sealed state. </param>
+    public OpChain<T> Ceiling(object owner = null) => ChainAddStep(OpChainStep<T>.Ceiling(), owner);
+
+    /// <inheritdoc cref="OpChainStep{T}.Truncate"/> 
+    /// <param name="owner"> The owner of the chain, used only to ignore sealed state. </param>
+    public OpChain<T> Truncate(object owner = null) => ChainAddStep(OpChainStep<T>.Truncate(), owner);
+
+    /// <inheritdoc cref="OpChainStep{T}.Absolute"/> 
+    /// <param name="owner"> The owner of the chain, used only to ignore sealed state. </param>
+    public OpChain<T> Absolute(object owner = null) => ChainAddStep(OpChainStep<T>.Absolute(), owner);
+
+    /// <inheritdoc cref="OpChainStep{T}.AsNegative"/> 
+    /// <param name="owner"> The owner of the chain, used only to ignore sealed state. </param>
+    public OpChain<T> AsNegative(object owner = null) => ChainAddStep(OpChainStep<T>.AsNegative(), owner);
+
+    /// <inheritdoc cref="OpChainStep{T}.FlipSign"/> 
+    /// <param name="owner"> The owner of the chain, used only to ignore sealed state. </param>
+    public OpChain<T> FlipSign(object owner = null) => ChainAddStep(OpChainStep<T>.FlipSign(), owner);
+
+    /// <inheritdoc cref="OpChainStep{T}.Reciprocal"/> 
+    /// <param name="owner"> The owner of the chain, used only to ignore sealed state. </param>
+    public OpChain<T> Reciprocal(object owner = null) => ChainAddStep(OpChainStep<T>.Reciprocal(), owner);
+    #endregion
 
     protected override void OnNonFatalDestruction(IWatchable dependency)
     {

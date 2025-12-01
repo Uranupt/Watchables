@@ -8,10 +8,10 @@ namespace Watchables.Transformations
 
 		private readonly bool _inverse;
 		private readonly bool _clamp;
-		private readonly Watchable<float> _maximum;
-		private readonly Watchable<float> _current;
+		private readonly WatchableBase<float> _maximum;
+		private readonly WatchableBase<float> _current;
 
-		public PercentageTransformation(Watchable<float> maximum, Watchable<float> current, bool inverse = false, bool clamp = false)
+		public PercentageTransformation(WatchableBase<float> maximum, WatchableBase<float> current, bool inverse = false, bool clamp = false)
 		{
 			_maximum = maximum;
 			_current = current;

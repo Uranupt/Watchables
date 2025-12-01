@@ -3,22 +3,21 @@ using System;
 
 namespace Watchables
 {
-  public sealed class CompositeStep<T> : IValueWrapper<T>, IOwnable where T : unmanaged
+  public sealed class CompositeStep<T> : OwnableBase, IValueWrapper<T> where T : unmanaged
   {
-
-    private object _owner;
 
     public event Action<CompositeStep<T>> Removed;
     public CompositeOperation Operation { get; private set; }
     public IValueWrapper<T> Value { get; private set; }
-    public bool IsOwned => _ownwer != null;
+    public CompositeStepPriority Priority { get; private set; }
     public bool IsValid => Value != null;
 
-    private CompositeStep(CompositeOperation op, IValueWrapper<T> value, object owner)
+    private CompositeStep(CompositeOperation op, IValueWrapper<T> value, object owner, CompositeStepPriority priority)
     {
       Operation = op;
       Value = value;
       _owner = owner;
+      Priority = priority;
       if(Value is IWatchable)
       {
         (Value as IWatchable).Destroyed += OnValueDestroyed;
@@ -27,39 +26,53 @@ namespace Watchables
 
     public static implicit operator T(CompositeStep<T> step) => step.ToValue();
 
-    public static CompositeStep<T> Force(IValueWrapper<T> value, object owner = null) => new(CompositeOperation.Force, value, owner);
-    public static CompositeStep<T> SetFinal(IValueWrapper<T> value, object owner = null) => new(CompositeOperation.SetFinal, value, owner);
-    public static CompositeStep<T> SetBase(IValueWrapper<T> value, object owner = null) => new(CompositeOperation.SetBase, value, owner);
-    public static CompositeStep<T> Add(IValueWrapper<T> value, object owner = null) => new(CompositeOperation.Add, value, owner);
-    public static CompositeStep<T> Subtract(IValueWrapper<T> value, object owner = null) => new(CompositeOperation.Subtract, value, owner);
-    public static CompositeStep<T> Multiply(IValueWrapper<T> value, object owner = null) => new(CompositeOperation.Multiply, value, owner);
-    public static CompositeStep<T> Divide(IValueWrapper<T> value, object owner = null) => new(CompositeOperation.Divide, value, owner);
-    public static CompositeStep<T> Minimum(IValueWrapper<T> value, object owner = null) => new(CompositeOperation.Minimum, value, owner);
-    public static CompositeStep<T> Maximum(IValueWrapper<T> value, object owner = null) => new(CompositeOperation.Maximum, value, owner);
+    public static CompositeStep<T> Force(IValueWrapper<T> value, object owner = null, CompositeStepPriority priority = CompositeStepPriority.None) 
+      => new(CompositeOperation.Force, value, owner, priority);
 
-    public bool SetOwner(object owner)
+    public static CompositeStep<T> SetFinal(IValueWrapper<T> value, object owner = null, CompositeStepPriority priority = CompositeStepPriority.None) 
+      => new(CompositeOperation.SetFinal, value, owner, priority);
+
+    public static CompositeStep<T> SetBase(IValueWrapper<T> value, object owner = null, CompositeStepPriority priority = CompositeStepPriority.None) 
+      => new(CompositeOperation.SetBase, value, owner, priority);
+
+    public static CompositeStep<T> Add(IValueWrapper<T> value, object owner = null, CompositeStepPriority priority = CompositeStepPriority.None) 
+      => new(CompositeOperation.Add, value, owner, priority);
+
+    public static CompositeStep<T> Subtract(IValueWrapper<T> value, object owner = null, CompositeStepPriority priority = CompositeStepPriority.None) 
+      => new(CompositeOperation.Subtract, value, owner, priority);
+
+    public static CompositeStep<T> Multiply(IValueWrapper<T> value, object owner = null, CompositeStepPriority priority = CompositeStepPriority.None) 
+      => new(CompositeOperation.Multiply, value, owner, priority);
+
+    public static CompositeStep<T> Divide(IValueWrapper<T> value, object owner = null, CompositeStepPriority priority = CompositeStepPriority.None) 
+      => new(CompositeOperation.Divide, value, owner, priority);
+
+    public static CompositeStep<T> Minimum(IValueWrapper<T> value, object owner = null, CompositeStepPriority priority = CompositeStepPriority.None) 
+      => new(CompositeOperation.Minimum, value, owner, priority);
+
+    public static CompositeStep<T> Maximum(IValueWrapper<T> value, object owner = null, CompositeStepPriority priority = CompositeStepPriority.None) 
+      => new(CompositeOperation.Maximum, value, owner, priority);
+
+    public override bool SetOwner(object owner)
     {
-
+      if(!IsValid) { return false; }
+      return base.SetOwner(owner);
     }
 
-    public bool ClearOwner(object owner)
+    public override bool ClearOwner(object owner)
     {
-
-    }
-
-    public bool CompareToOwner(object owner)
-    {
-
+      if(!IsValid) { return false; }
+      return base.ClearOwner(owner);
     }
 
     public bool Remove(object owner = null)
     {
       if(IsOwned && !CompareToOwner(owner)) { return false; }
-      Removed.Invoke(this);
+      Removed?.Invoke(this);
       return true;
     }
 
-    public T ToValue() => Value;
+    public T ToValue() => Value.ToValue();
 
     private void OnValueDestroyed(IWatchable value)
     {

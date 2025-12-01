@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="WatchablesAnalyzer.CodeFixes/WatchablesAnalyzer.CodeFixes.csproj" />
+  <Project Path="WatchablesAnalyzer.Package/WatchablesAnalyzer.Package.csproj" />
+  <Project Path="WatchablesAnalyzer.Test/WatchablesAnalyzer.Test.csproj" />
+  <Project Path="WatchablesAnalyzer.Vsix/WatchablesAnalyzer.Vsix.csproj" />
+  <Project Path="WatchablesAnalyzer/WatchablesAnalyzer.csproj" />
+</Solution>

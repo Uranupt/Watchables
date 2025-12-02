@@ -1,6 +1,5 @@
-
-
 using System;
+
 
 namespace Watchables
 {
@@ -30,10 +29,11 @@ namespace Watchables
       return true;
     }
 
+
     public bool Add(T value, object owner = null)
     {
       if(IsDestroyed || (IsFrozen && !CompareToOwner(owner))){ return false; }
-      _value = Add(_value, value);
+      _value = _value.Add(value);
       Evaluate();
       return true;
     }
@@ -41,7 +41,7 @@ namespace Watchables
     public bool Subtract(T value, object owner = null)
     {
       if(IsDestroyed || (IsFrozen && !CompareToOwner(owner))) { return false; }
-      _value = Subtract(_value, value);
+      _value = _value.Subtract(value);
       Evaluate();
       return true;
     }
@@ -53,12 +53,8 @@ namespace Watchables
     protected override void Evaluate()
     {
       if(IsFrozen) { return; }
-      _value = Clamp(_value, Minimum.ToValue(), Maximum.ToValue());
+      _value = _value.Minimum(Minimum.ToValue()).Maximum(Maximum.ToValue());
     }
-
-    protected abstract T Clamp(T input, T min, T max);
-    protected abstract T Add(T input, T value);
-    protected abstract T Subtract(T input, T value);
 
   }
 }

@@ -8,17 +8,17 @@ namespace Watchables
 
     #region Short
 
-    public static short Add(this short value, short operand) => value + operand;
-    public static short Subtract(this short value, short operand) => value - operand;
-    public static short Multiply(this short value, short operand) => value * operand;
-    public static short Divide(this short value, short operand, bool guard = false) => (guard && operand == 0) ? 0 : value / operand;
-    public static short Modulo(this short value, short operand, bool guard = false) => (guard && operand == 0) ? 0 : value % operand;
+    public static short Add(this short value, short operand) => (short)(value + operand);
+    public static short Subtract(this short value, short operand) => (short)(value - operand);
+    public static short Multiply(this short value, short operand) => (short)(value * operand);
+    public static short Divide(this short value, short operand, bool guard = false) => (guard && operand == 0) ? (short)0 : (short)(value / operand);
+    public static short Modulo(this short value, short operand, bool guard = false) => (guard && operand == 0) ? (short)0 : (short)(value % operand);
     public static short Power(this short value, short operand) => (short)Pow(value, operand);
     public static short Minimum(this short value, short operand) => value < operand ? operand : value;
     public static short Maximum(this short value, short operand) => value > operand ? operand : value;
-    public static short Absolute(this short value) => value < 0 ? value * -1 : value;
-    public static short AsNegative(this short value) => value > 0 ? value * -1 : value;
-    public static short FlipSign(this short value) => value * -1;
+    public static short Absolute(this short value) => value < 0 ? (short)-value : value;
+    public static short AsNegative(this short value) => value > 0 ? (short)-value : value;
+    public static short FlipSign(this short value) => (short)-value;
 
     #endregion
 
@@ -56,17 +56,14 @@ namespace Watchables
 
     #region UShort
 
-    public static ushort Add(this ushort value, ushort operand) => value + operand;
-    public static ushort Subtract(this ushort value, ushort operand) => value - operand;
-    public static ushort Multiply(this ushort value, ushort operand) => value * operand;
-    public static ushort Divide(this ushort value, ushort operand, bool guard = false) => (guard && operand == 0) ? 0 : value / operand;
-    public static ushort Modulo(this ushort value, ushort operand, bool guard = false) => (guard && operand == 0) ? 0 : value % operand;
-    public static ushort Power(this ushort value, ushort operand) => (ushort)Pow(value, operand);
+    public static ushort Add(this ushort value, ushort operand) => (ushort)(value + operand);
+    public static ushort Subtract(this ushort value, ushort operand) => (ushort)(value - operand);
+    public static ushort Multiply(this ushort value, ushort operand) => (ushort)(value * operand);
+    public static ushort Divide(this ushort value, ushort operand, bool guard = false) => (guard && operand == 0) ? (ushort)0 : (ushort)(value / operand);
+    public static ushort Modulo(this ushort value, ushort operand, bool guard = false) => (guard && operand == 0) ? (ushort)0 : (ushort)(value % operand);
+    public static ushort Power(this ushort value, ushort operand) => (ushort)UPow(value, operand);
     public static ushort Minimum(this ushort value, ushort operand) => value < operand ? operand : value;
     public static ushort Maximum(this ushort value, ushort operand) => value > operand ? operand : value;
-    public static ushort Absolute(this ushort value) => value < 0 ? value * -1 : value;
-    public static ushort AsNegative(this ushort value) => value > 0 ? value * -1 : value;
-    public static ushort FlipSign(this ushort value) => value * -1;
 
     #endregion
 
@@ -77,12 +74,9 @@ namespace Watchables
     public static uint Multiply(this uint value, uint operand) => value * operand;
     public static uint Divide(this uint value, uint operand, bool guard = false) => (guard && operand == 0) ? 0 : value / operand;
     public static uint Modulo(this uint value, uint operand, bool guard = false) => (guard && operand == 0) ? 0 : value % operand;
-    public static uint Power(this uint value, uint operand) => (uint)Pow(value, operand);
+    public static uint Power(this uint value, uint operand) => (uint)UPow(value, operand);
     public static uint Minimum(this uint value, uint operand) => value < operand ? operand : value;
     public static uint Maximum(this uint value, uint operand) => value > operand ? operand : value;
-    public static uint Absolute(this uint value) => value < 0 ? value * -1 : value;
-    public static uint AsNegative(this uint value) => value > 0 ? value * -1 : value;
-    public static uint FlipSign(this uint value) => value * -1;
 
     #endregion
 
@@ -93,12 +87,9 @@ namespace Watchables
     public static ulong Multiply(this ulong value, ulong operand) => value * operand;
     public static ulong Divide(this ulong value, ulong operand, bool guard = false) => (guard && operand == 0) ? 0 : value / operand;
     public static ulong Modulo(this ulong value, ulong operand, bool guard = false) => (guard && operand == 0) ? 0 : value % operand;
-    public static ulong Power(this ulong value, ulong operand) => Pow(value, operand);
+    public static ulong Power(this ulong value, ulong operand) => UPow(value, operand);
     public static ulong Minimum(this ulong value, ulong operand) => value < operand ? operand : value;
     public static ulong Maximum(this ulong value, ulong operand) => value > operand ? operand : value;
-    public static ulong Absolute(this ulong value) => value < 0 ? value * -1 : value;
-    public static ulong AsNegative(this ulong value) => value > 0 ? value * -1 : value;
-    public static ulong FlipSign(this ulong value) => value * -1;
 
     #endregion
 
@@ -109,8 +100,8 @@ namespace Watchables
     public static decimal Multiply(this decimal value, decimal operand) => value * operand;
     public static decimal Divide(this decimal value, decimal operand, bool guard = false) => (guard && operand == 0) ? 0 : value / operand;
     public static decimal Modulo(this decimal value, decimal operand, bool guard = false) => (guard && operand == 0) ? 0 : value % operand;
-    public static decimal Power(this decimal value, decimal operand) => (decimal)Math.Pow(value, operand);
-    public static decimal Root(this decimal value, decimal operand, bool guard = false) => (guard && operand == 0) ? 0 : (decimal)Math.Pow(value, 1 / operand);
+    public static decimal Power(this decimal value, decimal operand) => (decimal)Math.Pow((double)value, (double)operand);
+    public static decimal Root(this decimal value, decimal operand, bool guard = false) => (guard && operand == 0) ? 0 : Power(value, 1 / operand);
     public static decimal Minimum(this decimal value, decimal operand) => value < operand ? operand : value;
     public static decimal Maximum(this decimal value, decimal operand) => value > operand ? operand : value;
     public static decimal Round(this decimal value) => Math.Round(value, MidpointRounding.AwayFromZero);
@@ -127,12 +118,12 @@ namespace Watchables
     #region Float
 
     public static float Add(this float value, float operand) => value + operand;
-    public static float Subtract(this float value, short operand) => value - operand;
+    public static float Subtract(this float value, float operand) => value - operand;
     public static float Multiply(this float value, float operand) => value * operand;
     public static float Divide(this float value, float operand, bool guard = false) => (guard && operand == 0) ? 0 : value / operand;
     public static float Modulo(this float value, float operand, bool guard = false) => (guard && operand == 0) ? 0 : value % operand;
     public static float Power(this float value, float operand) => (float)Math.Pow(value, operand);
-    public static float Root(this float value, float operand, bool guard = false) => (guard && operand == 0) ? 0 : (float)Math.Pow(value, 1 / operand);
+    public static float Root(this float value, float operand, bool guard = false) => (guard && operand == 0) ? 0 : Power(value, 1 / operand);
     public static float Minimum(this float value, float operand) => value < operand ? operand : value;
     public static float Maximum(this float value, float operand) => value > operand ? operand : value;
     public static float Round(this float value) => (float)Math.Round(value, MidpointRounding.AwayFromZero);
@@ -154,7 +145,7 @@ namespace Watchables
     public static double Divide(this double value, double operand, bool guard = false) => (guard && operand == 0) ? 0 : value / operand;
     public static double Modulo(this double value, double operand, bool guard = false) => (guard && operand == 0) ? 0 : value % operand;
     public static double Power(this double value, double operand) => Math.Pow(value, operand);
-    public static double Root(this double value, double operand, bool guard = false) => (guard && operand == 0) ? 0 : Math.Pow(value, 1 / operand);
+    public static double Root(this double value, double operand, bool guard = false) => (guard && operand == 0) ? 0 : Power(value, 1 / operand);
     public static double Minimum(this double value, double operand) => value < operand ? operand : value;
     public static double Maximum(this double value, double operand) => value > operand ? operand : value;
     public static double Round(this double value) => Math.Round(value, MidpointRounding.AwayFromZero);
@@ -190,23 +181,23 @@ namespace Watchables
     {
       return operation switch
       {
-        Add => Add(value, operand),
-        Subtract => Subtract(value, operand),
-        Multiply => Multiply(value, operand),
-        Divide => Divide(value, operand, guard),
-        Modulo => Modulo(value, operand, guard),
-        Power => Power(value, operand),
-        Root => Root(value, operand, guard),
-        Minimum => Minimum(value, operand),
-        Maximum => Maximum(value, operand),
-        Round => Round(value, operand),
-        Floor => Floor(value, operand),
-        Ceiling => Ceiling(value, operand),
-        Truncate => Truncate(value, operand),
-        Absolute => Absolute(value, operand),
-        AsNegative => AsNegative(value, operand),
-        FlipSign => FlipSign(value, operand),
-        Reciprocal => Reciprocal(value, operand, guard),
+        NumericOperation.Add => Add(value, operand),
+        NumericOperation.Subtract => Subtract(value, operand),
+        NumericOperation.Multiply => Multiply(value, operand),
+        NumericOperation.Divide => Divide(value, operand, guard),
+        NumericOperation.Modulo => Modulo(value, operand, guard),
+        NumericOperation.Power => Power(value, operand),
+        NumericOperation.Root => Root(value, operand, guard),
+        NumericOperation.Minimum => Minimum(value, operand),
+        NumericOperation.Maximum => Maximum(value, operand),
+        NumericOperation.Round => Round(value),
+        NumericOperation.Floor => Floor(value),
+        NumericOperation.Ceiling => Ceiling(value),
+        NumericOperation.Truncate => Truncate(value),
+        NumericOperation.Absolute => Absolute(value),
+        NumericOperation.AsNegative => AsNegative(value),
+        NumericOperation.FlipSign => FlipSign(value),
+        NumericOperation.Reciprocal => Reciprocal(value, guard),
         _ => throw UnsupportedException(operation.ToString(), typeof(T))
       };
     }
@@ -221,7 +212,7 @@ namespace Watchables
       if(y < 0) { return 0; }
       if(y == 0) { return 1; }
       if(y == 1) { return x; }
-      int resl = x;
+      long resl = x;
       while(y > 1)
       {
         resl *= x;
@@ -230,12 +221,12 @@ namespace Watchables
       return resl;
     }
 
-    private static ulong Pow(ulong x, ulong y)
+    private static ulong UPow(ulong x, ulong y)
     {
       if(y < 0) { return 0; }
       if(y == 0) { return 1; }
       if(y == 1) { return x; }
-      int resl = x;
+      ulong resl = x;
       while(y > 1)
       {
         resl *= x;

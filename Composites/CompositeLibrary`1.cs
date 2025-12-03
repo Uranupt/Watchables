@@ -22,7 +22,7 @@ namespace Watchables
     {
       if(!_collection.TryGetValue(name, out CompositeWatchable<T> value))
       {
-        value = CreateNew();
+        value = new CompositeWatchable<T>();
         value.SetOwner(_collection);
         value.SetSealed(true, _collection);
         _collection[name] = value;
@@ -64,8 +64,6 @@ namespace Watchables
       _collection.Clear();
       return true;
     }
-
-    protected abstract CompositeWatchable<T> CreateNew();
 
   }
 }

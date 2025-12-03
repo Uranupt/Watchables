@@ -53,81 +53,94 @@ namespace Watchables
 
     #region Chains
 
-    public static OperationChain<ushort> NewChain(IValueWrapper<ushort> value) => new OperationChain<ushort>(value);
+    public static OperationChain<ushort> Chain(IValueWrapper<ushort> value) => new OperationChain<ushort>(value);
+    public static OperationChain<uint> Chain(IValueWrapper<uint> value) => new OperationChain<uint>(value);
+    public static OperationChain<ulong> Chain(IValueWrapper<ulong> value) => new OperationChain<ulong>(value);
 
-    public static OperationChain<ushort> NewStep(this OperationChain<ushort> chain, UnsignedOperation operation, 
-      IValueWrapper<ushort> operand, bool required = false)
+    public static OperationChain<short> Chain(IValueWrapper<short> value) => new OperationChain<short>(value);
+
+    public static OperationChain<int> Chain(IValueWrapper<int> value) => new OperationChain<int>(value);
+
+
+
+    public static OperationChain<long> Chain(IValueWrapper<long> value) => new OperationChain<long>(value);
+
+
+
+    public static OperationChain<decimal> Chain(IValueWrapper<decimal> value) => new OperationChain<decimal>(value);
+
+    public static OperationChain<float> Chain(IValueWrapper<float> value) => new OperationChain<float>(value);
+
+
+
+    public static OperationChain<double> Chain(IValueWrapper<double> value) => new OperationChain<double>(value);
+
+    #endregion
+
+    #region Step chaining
+
+    public static OperationChain<ushort> AddStep(this OperationChain<ushort> chain, OperationStep<ushort> step, object owner = null)
     {
-      chain.AddStep(NewStep(operation, operand, required));
+      chain.AddStep(step, owner);
       return chain;
     }
 
-    public static OperationChain<uint> NewChain(IValueWrapper<uint> value) => new OperationChain<uint>(value);
+    public static OperationChain<ushort> AddStep(this OperationChain<ushort> chain, UnsignedOperation operation,
+      IValueWrapper<ushort> operand, bool required = false, object owner = null)
+    {
+      return AddStep(chain, NewStep(operation, operand, required), owner);
+    }
 
-    public static OperationChain<uint> NewStep(this OperationChain<uint> chain, UnsignedOperation operation,
+    public static OperationChain<uint> AddStep(this OperationChain<uint> chain, UnsignedOperation operation,
       IValueWrapper<uint> operand, bool required = false)
     {
       chain.AddStep(NewStep(operation, operand, required));
       return chain;
     }
 
-    public static OperationChain<ulong> NewChain(IValueWrapper<ulong> value) => new OperationChain<ulong>(value);
-
-    public static OperationChain<ulong> NewStep(this OperationChain<ulong> chain, UnsignedOperation operation,
+    public static OperationChain<ulong> AddStep(this OperationChain<ulong> chain, UnsignedOperation operation,
       IValueWrapper<ulong> operand, bool required = false)
     {
       chain.AddStep(NewStep(operation, operand, required));
       return chain;
     }
 
-    public static OperationChain<short> NewChain(IValueWrapper<short> value) => new OperationChain<short>(value);
-
-    public static OperationChain<short> NewStep(this OperationChain<short> chain, SignedOperation operation,
+    public static OperationChain<short> AddStep(this OperationChain<short> chain, SignedOperation operation,
       IValueWrapper<short> operand, bool required = false)
     {
       chain.AddStep(NewStep(operation, operand, required));
       return chain;
     }
 
-    public static OperationChain<int> NewChain(IValueWrapper<int> value) => new OperationChain<int>(value);
-
-    public static OperationChain<int> NewStep(this OperationChain<int> chain, SignedOperation operation,
+    public static OperationChain<int> AddStep(this OperationChain<int> chain, SignedOperation operation,
       IValueWrapper<int> operand, bool required = false)
     {
       chain.AddStep(NewStep(operation, operand, required));
       return chain;
     }
 
-    public static OperationChain<long> NewChain(IValueWrapper<long> value) => new OperationChain<long>(value);
-
-    public static OperationChain<long> NewStep(this OperationChain<long> chain, SignedOperation operation,
+    public static OperationChain<long> AddStep(this OperationChain<long> chain, SignedOperation operation,
       IValueWrapper<long> operand, bool required = false)
     {
       chain.AddStep(NewStep(operation, operand, required));
       return chain;
     }
 
-    public static OperationChain<decimal> NewChain(IValueWrapper<decimal> value) => new OperationChain<decimal>(value);
-
-    public static OperationChain<decimal> NewStep(this OperationChain<decimal> chain, RealOperation operation,
+    public static OperationChain<decimal> AddStep(this OperationChain<decimal> chain, RealOperation operation,
       IValueWrapper<decimal> operand, bool required = false)
     {
       chain.AddStep(NewStep(operation, operand, required));
       return chain;
     }
 
-    public static OperationChain<float> NewChain(IValueWrapper<float> value) => new OperationChain<float>(value);
-
-    public static OperationChain<float> NewStep(this OperationChain<float> chain, RealOperation operation,
+    public static OperationChain<float> AddStep(this OperationChain<float> chain, RealOperation operation,
       IValueWrapper<float> operand, bool required = false)
     {
       chain.AddStep(NewStep(operation, operand, required));
       return chain;
     }
 
-    public static OperationChain<double> NewChain(IValueWrapper<double> value) => new OperationChain<double>(value);
-
-    public static OperationChain<double> NewStep(this OperationChain<double> chain, RealOperation operation,
+    public static OperationChain<double> AddStep(this OperationChain<double> chain, RealOperation operation,
       IValueWrapper<double> operand, bool required = false)
     {
       chain.AddStep(NewStep(operation, operand, required));

@@ -15,25 +15,8 @@ namespace Watchables
     public static CompositeStep<ushort> NewStep(CompositeOperation operation, IValueWrapper<ushort> value, StepPriority priority = StepPriority.None)
       => new CompositeStep<ushort>(operation, value, priority);
 
-    public static CompositeLibrary<ushort> NewUShortLibrary() => new CompositeLibrary<ushort>();
+    public static CompositeLibrary<ushort> UShortLibrary() => new CompositeLibrary<ushort>();
 
-
-    internal static CompositeWatchable<T> New<T>() where T : unmanaged
-    {
-      return (Type.GetTypeCode(typeof(T))) switch
-      {
-        TypeCode.Decimal or
-        TypeCode.Double or
-        TypeCode.Int16 or
-        TypeCode.Int32 or
-        TypeCode.Int64 or
-        TypeCode.Single or
-        TypeCode.UInt16 => NewUShort()
-        TypeCode.UInt32 or
-        TypeCode.UInt64 => true,
-        _ => throw new ArgumentException($"Invalid Composite type: {typeof(T).Name}. Only numerics are allowed.")
-      };
-    }
 
     private static CompositeStep<T> NewStep<T>(CompositeOperation operation, IValueWrapper<T> value,
       StepPriority priority = StepPriority.None, object owner = null) where T : unmanaged

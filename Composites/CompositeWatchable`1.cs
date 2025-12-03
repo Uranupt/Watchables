@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Watchables
 {
-  public abstract class CompositeWatchable<T> : NestedWatchable<T>, ISealable where T : unmanaged
+  public class CompositeWatchable<T> : SealableNestedBase<T>, IEnforceNumeric<T> where T : unmanaged
   {
 
     private readonly List<CompositeStep<T>> _steps = new();

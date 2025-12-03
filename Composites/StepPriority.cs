@@ -2,7 +2,7 @@
 
 namespace Watchables
 {
-  public enum CompositeStepPriority : byte
+  public enum StepPriority : byte
   {
     None,
     Low,

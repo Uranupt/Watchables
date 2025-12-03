@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Watchables
 {
-  public abstract class CompositeLibrary<T> : SealableBase where T : unmanaged
+  public class CompositeLibrary<T> : SealableBase, IEnforceNumeric<T> where T : unmanaged
   {
 
     protected readonly Dictionary<string, CompositeWatchable<T>> _collection = new();

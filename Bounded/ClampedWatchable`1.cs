@@ -3,7 +3,7 @@ using System;
 
 namespace Watchables
 {
-  public class ClampedWatchable<T> : BoundedWatchable<T> where T : unmanaged
+  public sealed class ClampedWatchable<T> : BoundedWatchable<T> where T : unmanaged
   {
 
     /// <summary> Whether the value is frozen. This also prevents clamping. </summary>

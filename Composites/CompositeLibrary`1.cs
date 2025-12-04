@@ -66,4 +66,19 @@ namespace Watchables
     }
 
   }
+
+  public static class CompositeLibrary
+  {
+
+    public static CompositeLibrary<ushort> UShort() => new CompositeLibrary<ushort>();
+    public static CompositeLibrary<uint> UInt() => new CompositeLibrary<uint>();
+    public static CompositeLibrary<ulong> ULong() => new CompositeLibrary<ulong>();
+    public static CompositeLibrary<short> Short() => new CompositeLibrary<short>();
+    public static CompositeLibrary<int> Int() => new CompositeLibrary<int>();
+    public static CompositeLibrary<long> Long() => new CompositeLibrary<long>();
+    public static CompositeLibrary<decimal> Decimal() => new CompositeLibrary<decimal>();
+    public static CompositeLibrary<float> Float() => new CompositeLibrary<float>();
+    public static CompositeLibrary<double> Double() => new CompositeLibrary<double>();
+
+  }
 }

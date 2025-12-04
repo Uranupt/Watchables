@@ -20,38 +20,65 @@ namespace Watchables
 
     public static TSelf Get(string name)
     {
-      EnsureInitialized();
-      if(!_tags.TryGetValue(name, out TSelf tag))
+      if(!TryGet(name, out TSelf tag))
       {
         throw new KeyNotFoundException($"The Tag type {typeof(TSelf).Name} has no tag with name '{name}'.");
       }
       return tag;
     }
 
-    public static TSelf FromIndex(int index)
+    public static bool TryGet(string name, out TSelf tag)
     {
       EnsureInitialized();
-      foreach(TSelf tag in _tags.Values)
+      return _tags.TryGetValue(name, out tag);
+    }
+
+    public static TSelf FromIndex(int index)
+    {
+      if(!TryGetFromIndex(index, out TSelf tag))
       {
-        if(tag.Index == index)
+        throw new KeyNotFoundException($"The Tag type {typeof(TSelf).Name} has no tag at index {index}.");
+      }
+      return tag;
+    }
+
+    public static bool TryGetFromIndex(int index, out TSelf tag)
+    {
+      EnsureInitialized();
+      tag = null;
+      foreach(TSelf instance in _tags.Values)
+      {
+        if(instance.Index == index)
         {
-          return tag;
+          tag = instance;
+          return true;
         }
       }
-      throw new KeyNotFoundException($"The Tag type {typeof(TSelf).Name} has no tag at index {index}.");
+      return false;
     }
 
     public static TSelf FromMask(int mask)
     {
-      EnsureInitialized();
-      foreach(TSelf tag in _tags.Values)
+      if(!TryGetFromMask(mask, out TSelf tag))
       {
-        if(tag.Mask == mask)
+        throw new KeyNotFoundException($"The Tag type {typeof(TSelf).Name} has no tag with mask value {mask}.");
+      }
+      return tag;
+    }
+
+    public static bool TryGetFromMask(int mask, out TSelf tag)
+    {
+      EnsureInitialized();
+      tag = null;
+      foreach(TSelf instance in _tags.Values)
+      {
+        if(instance.Mask == mask)
         {
-          return tag;
+          tag = instance;
+          return true;
         }
       }
-      throw new KeyNotFoundException($"The Tag type {typeof(TSelf).Name} has no tag with mask value {mask}.");
+      return false;
     }
 
     private static void EnsureInitialized()

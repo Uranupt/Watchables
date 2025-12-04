@@ -78,4 +78,28 @@ namespace Watchables
     //public static OperationStep<T> Reciprocal() => new(OperationType.Reciprocal, false);
 
   }
+
+  public static class OperationStep
+  {
+
+    public static OperationStep<ushort> New(UnsignedOperation operation, IValueWrapper<ushort> operand, bool required = false)
+      => new OperationStep<ushort>(operation.Operation, operand, required);
+    public static OperationStep<uint> New(UnsignedOperation operation, IValueWrapper<uint> operand, bool required = false)
+      => new OperationStep<uint>(operation.Operation, operand, required);
+    public static OperationStep<ulong> New(UnsignedOperation operation, IValueWrapper<ulong> operand, bool required = false)
+      => new OperationStep<ulong>(operation.Operation, operand, required);
+    public static OperationStep<short> New(SignedOperation operation, IValueWrapper<short> operand, bool required = false)
+      => new OperationStep<short>(operation.Operation, operand, required);
+    public static OperationStep<int> New(SignedOperation operation, IValueWrapper<int> operand, bool required = false)
+      => new OperationStep<int>(operation.Operation, operand, required);
+    public static OperationStep<long> New(SignedOperation operation, IValueWrapper<long> operand, bool required = false)
+      => new OperationStep<long>(operation.Operation, operand, required);
+    public static OperationStep<decimal> New(RealOperation operation, IValueWrapper<decimal> operand, bool required = false)
+      => new OperationStep<decimal>(operation.Operation, operand, required);
+    public static OperationStep<float> New(RealOperation operation, IValueWrapper<float> operand, bool required = false)
+      => new OperationStep<float>(operation.Operation, operand, required);
+    public static OperationStep<double> New(RealOperation operation, IValueWrapper<double> operand, bool required = false)
+     => new OperationStep<double>(operation.Operation, operand, required);
+
+  }
 }

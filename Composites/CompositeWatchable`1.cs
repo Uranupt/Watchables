@@ -8,12 +8,12 @@ namespace Watchables
 
     private readonly List<CompositeStep<T>> _steps = new();
 
-    public bool IsSealed { get; private set; }
-
     public bool AddStep(CompositeStep<T> step, object owner = null)
     {
-      if(!IsEditAllowed(owner)) { return false; }
-      AddStepPrivate(step);
+      if(!MutationGuard(() => AddStepPrivate(step), owner))
+      {
+        return false;
+      }
       Sort();
       Evaluate();
       return true;
@@ -21,10 +21,12 @@ namespace Watchables
 
     public bool AddSteps(IEnumerable<CompositeStep<T>> steps, object owner = null)
     {
-      if(!IsEditAllowed(owner)) { return false; }
-      foreach(CompositeStep<T> step in steps)
+      if(!MutationGuard(
+        () => { foreach(CompositeStep<T> step in steps) { AddStepPrivate(step); } },
+        owner
+      ))
       {
-        AddStepPrivate(step);
+        return false;
       }
       Sort();
       Evaluate();
@@ -33,8 +35,10 @@ namespace Watchables
 
     public bool RemoveStep(CompositeStep<T> step, object owner = null)
     {
-      if(!IsEditAllowed(owner)) { return false; }
-      RemoveStepPrivate(step);
+      if(!MutationGuard(() => RemoveStepPrivate(step), owner))
+      {
+        return false;
+      }
       Sort();
       Evaluate();
       return true;
@@ -42,20 +46,15 @@ namespace Watchables
 
     public bool RemoveSteps(IEnumerable<CompositeStep<T>> steps, object owner = null)
     {
-      if(!IsEditAllowed(owner)) { return false; }
-      foreach(CompositeStep<T> step in steps)
+      if(!MutationGuard(
+        () => { foreach(CompositeStep<T> step in steps) { RemoveStepPrivate(step); } },
+        owner
+      ))
       {
-        RemoveStepPrivate(step);
+        return false;
       }
       Sort();
       Evaluate();
-      return true;
-    }
-
-    public bool SetSealed(bool sealedState, object owner = null)
-    {
-      if(IsOwned && !CompareToOwner(owner)) { return false; }
-      IsSealed = sealedState;
       return true;
     }
 
@@ -92,21 +91,33 @@ namespace Watchables
             break;
           }
           case CompositeOperation.Add:
+          {
+            _value.Operate(NumericOperation.Add, step.ToValue(), true);
+            break;
+          }
           case CompositeOperation.Subtract:
           {
-            ApplyTranslation(step, step.Operation == CompositeOperation.Subtract);
+            _value.Operate(NumericOperation.Subtract, step.ToValue(), true);
             break;
           }
           case CompositeOperation.Multiply:
+          {
+            _value.Operate(NumericOperation.Multiply, step.ToValue(), true);
+            break;
+          }
           case CompositeOperation.Divide:
           {
-            ApplyScaling(step, step.Operation == CompositeOperation.Divide);
+            _value.Operate(NumericOperation.Divide, step.ToValue(), true);
             break;
           }
           case CompositeOperation.Minimum:
+          {
+            _value.Operate(NumericOperation.Minimum, step.ToValue(), true);
+            break;
+          }
           case CompositeOperation.Maximum:
           {
-            ApplyClamp(step, step.Operation == CompositeOperation.Maximum);
+            _value.Operate(NumericOperation.Maximum, step.ToValue(), true);
             break;
           }
         }
@@ -134,10 +145,6 @@ namespace Watchables
       }
     }
 
-    protected abstract void ApplyTranslation(T value, bool subtract);
-    protected abstract void ApplyScaling(T value, bool divide);
-    protected abstract void ApplyClamp(T bound, bool upperBound);
-
     private void AddStepPrivate(CompositeStep<T> step)
     {
       if(_steps.Contains(step)) { return; }
@@ -159,13 +166,6 @@ namespace Watchables
       }
     }
 
-    private bool IsEditAllowed(object owner)
-    {
-      if(IsDestroyed) { return false; }
-      if(!IsSealed) { return true; }
-      return CompareToOwner(owner);
-    }
-
     private void Sort()
     {
       _steps.Sort(
@@ -175,6 +175,84 @@ namespace Watchables
           return resl == 0 ? y.Priority.CompareTo(x.Priority) : resl;
         }
        );
+    }
+
+  }
+
+  public static class CompositeWatchable
+  {
+
+    public static CompositeWatchable<ushort> UShort() => new CompositeWatchable<ushort>();
+    public static CompositeWatchable<uint> UInt() => new CompositeWatchable<uint>();
+    public static CompositeWatchable<ulong> ULong() => new CompositeWatchable<ulong>();
+    public static CompositeWatchable<short> Short() => new CompositeWatchable<short>();
+    public static CompositeWatchable<int> Int() => new CompositeWatchable<int>();
+    public static CompositeWatchable<long> Long() => new CompositeWatchable<long>();
+    public static CompositeWatchable<decimal> Decimal() => new CompositeWatchable<decimal>();
+    public static CompositeWatchable<float> Float() => new CompositeWatchable<float>();
+    public static CompositeWatchable<double> Double() => new CompositeWatchable<double>();
+
+    public static CompositeWatchable<ushort> WithBase(IValueWrapper<ushort> value, StepPriority priority = StepPriority.None)
+    {
+      CompositeWatchable<ushort> resl = new();
+      resl.AddStep(CompositeStep.New(CompositeOperation.SetBase, value, priority));
+      return resl;
+    }
+
+    public static CompositeWatchable<uint> WithBase(IValueWrapper<uint> value, StepPriority priority = StepPriority.None)
+    {
+      CompositeWatchable<uint> resl = new();
+      resl.AddStep(CompositeStep.New(CompositeOperation.SetBase, value, priority));
+      return resl;
+    }
+
+    public static CompositeWatchable<ulong> WithBase(IValueWrapper<ulong> value, StepPriority priority = StepPriority.None)
+    {
+      CompositeWatchable<ulong> resl = new();
+      resl.AddStep(CompositeStep.New(CompositeOperation.SetBase, value, priority));
+      return resl;
+    }
+
+    public static CompositeWatchable<short> WithBase(IValueWrapper<short> value, StepPriority priority = StepPriority.None)
+    {
+      CompositeWatchable<short> resl = new();
+      resl.AddStep(CompositeStep.New(CompositeOperation.SetBase, value, priority));
+      return resl;
+    }
+
+    public static CompositeWatchable<int> WithBase(IValueWrapper<int> value, StepPriority priority = StepPriority.None)
+    {
+      CompositeWatchable<int> resl = new();
+      resl.AddStep(CompositeStep.New(CompositeOperation.SetBase, value, priority));
+      return resl;
+    }
+
+    public static CompositeWatchable<long> WithBase(IValueWrapper<long> value, StepPriority priority = StepPriority.None)
+    {
+      CompositeWatchable<long> resl = new();
+      resl.AddStep(CompositeStep.New(CompositeOperation.SetBase, value, priority));
+      return resl;
+    }
+
+    public static CompositeWatchable<decimal> WithBase(IValueWrapper<decimal> value, StepPriority priority = StepPriority.None)
+    {
+      CompositeWatchable<decimal> resl = new();
+      resl.AddStep(CompositeStep.New(CompositeOperation.SetBase, value, priority));
+      return resl;
+    }
+
+    public static CompositeWatchable<float> WithBase(IValueWrapper<float> value, StepPriority priority = StepPriority.None)
+    {
+      CompositeWatchable<float> resl = new();
+      resl.AddStep(CompositeStep.New(CompositeOperation.SetBase, value, priority));
+      return resl;
+    }
+
+    public static CompositeWatchable<double> WithBase(IValueWrapper<double> value, StepPriority priority = StepPriority.None)
+    {
+      CompositeWatchable<double> resl = new();
+      resl.AddStep(CompositeStep.New(CompositeOperation.SetBase, value, priority));
+      return resl;
     }
 
   }

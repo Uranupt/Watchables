@@ -202,6 +202,29 @@ namespace Watchables
       };
     }
 
+    internal static void ValidateType(Type type)
+    {
+      switch (Type.GetTypeCode(type))
+      {
+        case TypeCode.UInt16:
+        case TypeCode.UInt32:
+        case TypeCode.UInt64:
+        case TypeCode.Int16:
+        case TypeCode.Int32:
+        case TypeCode.Int64:
+        case TypeCode.Decimal:
+        case TypeCode.Single:
+        case TypeCode.Double:
+        {
+          return;
+        }
+        default:
+        {
+          throw new ArgumentException($"Type of {type.Name} not valid. Only numeric unmanaged types are allowed.");
+        }
+      }
+    }
+
     private static Exception UnsupportedException(string operation, Type type)
     {
       return new ArgumentException($"Unhandled operation {operation} on type: '{type.Name}', only unmanaged numeric types are allowed.");

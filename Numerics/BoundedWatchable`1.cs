@@ -13,6 +13,7 @@ namespace Watchables
 
     public BoundedWatchable(IValueWrapper<T> minimum, IValueWrapper<T> maximum)
     {
+      NumericUtility.ValidateType(typeof(T));
       SetBound(ref _minimum, minimum);
       SetBound(ref _maximum, maximum);
     }

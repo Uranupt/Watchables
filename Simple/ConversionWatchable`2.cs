@@ -3,23 +3,24 @@ using System;
 
 namespace Watchables
 { 
-  public sealed class ConversionWatchable<TSource, TValue> : ConversionWatchable<TValue>
-    where TSource : unmanaged
-    where TValue : unmanaged
+  public sealed class ConversionWatchable<TSource, TValue> : NestedWatchable<TValue>
+    where TSource : IConvertible
+    where TValue : IConvertible
   {
 
     private IWatchable<TSource> _source;
 
-    public override Type SourceType => typeof(TSource);
-
-    internal ConversionWatchable(IWatchable<TSource> source) : base()
+    public ConversionWatchable(IWatchable<TSource> source)
     {
       _source = source;
       Register(_source);
     }
 
+    protected override bool CheckFatalDestruction(IWatchable dependency) => true;
+
     protected override void Evaluate()
     {
+      _value =
       _value = (TValue)Convert.ChangeType(_source.ToValue(), typeof(TValue));
     }
 

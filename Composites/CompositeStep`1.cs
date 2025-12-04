@@ -25,33 +25,6 @@ namespace Watchables
 
     public static implicit operator T(CompositeStep<T> step) => step.ToValue();
 
-    public static CompositeStep<T> Force(IValueWrapper<T> value, object owner = null, StepPriority priority = StepPriority.None) 
-      => new(CompositeOperation.Force, value, owner, priority);
-
-    public static CompositeStep<T> SetFinal(IValueWrapper<T> value, object owner = null, StepPriority priority = StepPriority.None) 
-      => new(CompositeOperation.SetFinal, value, owner, priority);
-
-    public static CompositeStep<T> SetBase(IValueWrapper<T> value, object owner = null, StepPriority priority = StepPriority.None) 
-      => new(CompositeOperation.SetBase, value, owner, priority);
-
-    public static CompositeStep<T> Add(IValueWrapper<T> value, object owner = null, StepPriority priority = StepPriority.None) 
-      => new(CompositeOperation.Add, value, owner, priority);
-
-    public static CompositeStep<T> Subtract(IValueWrapper<T> value, object owner = null, StepPriority priority = StepPriority.None) 
-      => new(CompositeOperation.Subtract, value, owner, priority);
-
-    public static CompositeStep<T> Multiply(IValueWrapper<T> value, object owner = null, StepPriority priority = StepPriority.None) 
-      => new(CompositeOperation.Multiply, value, owner, priority);
-
-    public static CompositeStep<T> Divide(IValueWrapper<T> value, object owner = null, StepPriority priority = StepPriority.None) 
-      => new(CompositeOperation.Divide, value, owner, priority);
-
-    public static CompositeStep<T> Minimum(IValueWrapper<T> value, object owner = null, StepPriority priority = StepPriority.None) 
-      => new(CompositeOperation.Minimum, value, owner, priority);
-
-    public static CompositeStep<T> Maximum(IValueWrapper<T> value, object owner = null, StepPriority priority = StepPriority.None) 
-      => new(CompositeOperation.Maximum, value, owner, priority);
-
     public override bool SetOwner(object owner)
     {
       if(!IsValid) { return false; }
@@ -79,6 +52,30 @@ namespace Watchables
       Remove(_owner);
       Value = null;
     }
+
+  }
+
+  public static class CompositeStep
+  {
+
+    public static CompositeStep<ushort> New(CompositeOperation operation, IValueWrapper<ushort> value, StepPriority priority = StepPriority.None)
+      => new CompositeStep<ushort>(operation, value, priority);
+    public static CompositeStep<uint> New(CompositeOperation operation, IValueWrapper<uint> value, StepPriority priority = StepPriority.None)
+      => new CompositeStep<uint>(operation, value, priority);
+    public static CompositeStep<ulong> New(CompositeOperation operation, IValueWrapper<ulong> value, StepPriority priority = StepPriority.None)
+      => new CompositeStep<ulong>(operation, value, priority);
+    public static CompositeStep<short> New(CompositeOperation operation, IValueWrapper<short> value, StepPriority priority = StepPriority.None)
+      => new CompositeStep<short>(operation, value, priority);
+    public static CompositeStep<int> New(CompositeOperation operation, IValueWrapper<int> value, StepPriority priority = StepPriority.None)
+      => new CompositeStep<int>(operation, value, priority);
+    public static CompositeStep<long> New(CompositeOperation operation, IValueWrapper<long> value, StepPriority priority = StepPriority.None)
+      => new CompositeStep<long>(operation, value, priority);
+    public static CompositeStep<decimal> New(CompositeOperation operation, IValueWrapper<decimal> value, StepPriority priority = StepPriority.None)
+      => new CompositeStep<decimal>(operation, value, priority);
+    public static CompositeStep<float> New(CompositeOperation operation, IValueWrapper<float> value, StepPriority priority = StepPriority.None)
+      => new CompositeStep<float>(operation, value, priority);
+    public static CompositeStep<double> New(CompositeOperation operation, IValueWrapper<double> value, StepPriority priority = StepPriority.None)
+      => new CompositeStep<double>(operation, value, priority);
 
   }
 }

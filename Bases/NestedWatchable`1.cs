@@ -1,3 +1,4 @@
+using System;
 
 
 namespace Watchables
@@ -44,6 +45,18 @@ namespace Watchables
 			Destroyed += OnDestroyed;
       base.DestroyProtected();
     }
+
+		protected override bool MutationGuard(Action action, object owner = null)
+		{
+			return base.MutationGuard(
+				() =>
+				{
+					action?.Invoke();
+					Evaluate();
+				},
+				owner
+			);
+		}
 
 		protected virtual void OnNonFatalDestruction(IWatchable dependency)
 		{

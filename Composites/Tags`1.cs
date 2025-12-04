@@ -8,6 +8,8 @@ namespace Watchables
 
     private readonly int _value;
 
+    public bool IsNone => _value == 0;
+
     private Tags(int value)
     {
       _value = value;

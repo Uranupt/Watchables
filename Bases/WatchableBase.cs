@@ -74,7 +74,7 @@ namespace Watchables
 		protected virtual bool MutationGuard(Action action, object owner = null)
 		{
 			if(IsDestroyed) { return false; }
-			action.Invoke();
+			action?.Invoke();
 			InvokeChanged();
 			return true;
 		}

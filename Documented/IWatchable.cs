@@ -11,7 +11,7 @@ namespace Watchables
   public interface IWatchable : IOwnable
   {
 
-    /// <summary> Whether this instance has already been destroyed. </summary>
+    /// <summary> Whether this instance has been destroyed. </summary>
     bool IsDestroyed { get; }
     /// <summary> The event fired when a change occurs. </summary>
     event Action Changed;

@@ -4,7 +4,7 @@ using System;
 namespace Watchables
 {
 	/// <summary>
-	/// Base class for the Watchable system. Implements <see cref="IWatchable"/>.
+	/// Extension of <see cref="OwnableBase"/> which provides common implementation for <see cref="IWatchable"/>.
 	/// </summary>
 	public abstract class WatchableBase : OwnableBase, IWatchable
 	{
@@ -40,9 +40,15 @@ namespace Watchables
 			return base.ClearOwner(owner);
 		}
 
+		/// <summary> Clears and cleans up any contained values of this instance. </summary>
 		protected abstract void ClearValue();
 
-		protected void InvokeChanged()
+    /// <summary> 
+    /// Attempts to call <see cref="BeforeChanged"/> and then invoke the <see cref="Changed"/> event.
+    /// Will fail if this instance is destroyed. 
+    /// Automatically detects and will throw an error on recurrsion.
+    /// </summary>
+    protected void InvokeChanged()
 		{
 			if(IsDestroyed) { return; }
 			if(_isUpdating)
@@ -61,7 +67,8 @@ namespace Watchables
 			}
 		}
 
-		protected virtual void DestroyProtected()
+		/// <summary> Authoritatively mark the instance as destroyed and clean up any values and listeners. </summary>
+		protected void DestroyProtected()
 		{
 			_owner = null;
 			IsDestroyed = true;
@@ -71,6 +78,10 @@ namespace Watchables
       ClearListeners();
     }
 
+		/// <summary> Attempt to perform a provided mutation. Derived types can override this to define additional mutation-locked states. </summary>
+		/// <param name="action"> The mutation to perform. </param>
+		/// <param name="owner"> The instance's current owner. </param>
+		/// <returns> If the mutation was successful. </returns>
 		protected virtual bool MutationGuard(Action action, object owner = null)
 		{
 			if(IsDestroyed) { return false; }
@@ -79,6 +90,7 @@ namespace Watchables
 			return true;
 		}
 
+		/// <summary> Override this method to define behavior directly before <see cref="Changed"/> is invoked. </summary>
 		protected virtual void BeforeChanged()
 		{
 

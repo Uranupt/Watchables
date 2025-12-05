@@ -3,57 +3,50 @@ using System;
 
 namespace Watchables
 {
-  public sealed class ClampedWatchable<T> : BoundedWatchable<T> where T : unmanaged
+  public sealed class ClampedWatchable<T> : SealableNestedBase<T>, IEnforceNumeric<T> where T : unmanaged
   {
 
-    /// <summary> Whether the value is frozen. This also prevents clamping. </summary>
-    public bool IsFrozen { get; private set; }
+    private OperationChain<T> _chain;
+    private BasicWatchable<T> _baseValue;
 
-    public ClampedWatchable(IValueWrapper<T> minimum, IValueWrapper<T> maximum) : base(minimum, maximum)
+    public IValueWrapper<T> Minimum { get; private set; }
+    public IValueWrapper<T> Maximum { get; private set; }
+
+    public ClampedWatchable(IValueWrapper<T> min, IValueWrapper<T> max)
     {
-
+      NumericUtility.ValidateType(typeof(T));
+      Minimum = min;
+      Maximum = max;
+      _baseValue = new BasicWatchable<T>();
+      _chain = OperationBuilder.ClampChain(_baseValue, Minimum, Maximum);
+      Register(_chain);
     }
 
-    public bool SetFrozen(bool frozenSate, object owner = null)
-    {
-      if(IsDestroyed || (IsOwned && !CompareToOwner(owner))) { return false; }
-      IsFrozen = frozenSate;
-      return true;
-    }
+    public bool Set(T value, object owner = null) => MutationGuard(() => _baseValue.SetValue(value), owner);
 
-    public bool Set(T value, object owner = null)
-    {
-      if(IsDestroyed || (IsFrozen && !CompareToOwner(owner))) { return false; }
-      _value = value;
-      Evaluate();
-      return true;
-    }
+    public bool Add(T value, object owner = null) => Set(_value.Add(value), owner);
 
-
-    public bool Add(T value, object owner = null)
-    {
-      if(IsDestroyed || (IsFrozen && !CompareToOwner(owner))){ return false; }
-      _value = _value.Add(value);
-      Evaluate();
-      return true;
-    }
-
-    public bool Subtract(T value, object owner = null)
-    {
-      if(IsDestroyed || (IsFrozen && !CompareToOwner(owner))) { return false; }
-      _value = _value.Subtract(value);
-      Evaluate();
-      return true;
-    }
+    public bool Subtract(T value, object owner = null) => Set(_value.Subtract(value), owner);
 
     public bool Sub(T value, object owner = null) => Subtract(value, owner);
 
-    protected sealed override bool CheckFatalDestruction(IWatchable dependency) => true;
+    public bool Fill(object owner = null) => Set(Maximum.ToValue(), owner);
 
-    protected override void Evaluate()
+    public bool Empty(object owner = null) => Set(Minimum.ToValue(), owner);
+
+    protected override bool CheckFatalDestruction(IWatchable dependency) => true;
+
+    protected override void Evaluate() => _value = _chain;
+
+    protected override void OnDestroyed(IWatchable self)
     {
-      if(IsFrozen) { return; }
-      _value = _value.Minimum(Minimum.ToValue()).Maximum(Maximum.ToValue());
+      Unregister(_chain);
+      _chain.Destroy();
+      _baseValue.Destroy();
+      _chain = null;
+      _baseValue = null;
+      Minimum = null;
+      Maximum = null;
     }
 
   }

@@ -44,14 +44,60 @@ namespace Watchables
     public static OperationWatchable<double> Watchable(NumericOperation operation, IValueWrapper<double> value, IValueWrapper<double> operand)
       => new OperationWatchable<double>(operation, value, operand);
 
-    public static OperationChain<T> ClampChain<T>(IValueWrapper<T> baseValue, IValueWrapper<T> min, IValueWrapper<T> max) where T : unmanaged
+    public static OperationChain<T> Clamp<T>(IValueWrapper<T> value, IValueWrapper<T> min, IValueWrapper<T> max) where T : unmanaged
     {
-      return new OperationChain<T>(baseValue)
-        .Then(Step(NumericOperation.Minimum, min, true))
-        .Then(Step(NumericOperation.Maximum, max, true));
+      return new OperationChain<T>(value)
+        .Then(UnsignedOperation.Minimum, min, true)
+        .Then(UnsignedOperation.Maximum, max, true);
     }
 
-    public static OperationChain<T> RatioChain<T>
+    public static OperationChain<decimal> RatioScale(IValueWrapper<decimal> value, IValueWrapper<decimal> ante, IValueWrapper<decimal> cons,
+      bool baseOne = false, bool normalize = false)
+    {
+      OperationChain<decimal> resl = new OperationChain<decimal>(ante).Then(NumericOperation.Divide, cons, true);
+      if(normalize)
+      {
+        resl.Then(NumericOperation.Minimum, 0m.Wrap())
+          .Then(NumericOperation.Maximum, 1m.Wrap());
+      }
+      if(baseOne)
+      {
+        resl.Then(NumericOperation.Add, 1m.Wrap());
+      }
+      return resl.Then(NumericOperation.Multiply, value, true);
+    }
+
+    public static OperationChain<float> RatioScale(IValueWrapper<float> value, IValueWrapper<float> ante, IValueWrapper<float> cons,
+      bool baseOne = false, bool normalize = false)
+    {
+      OperationChain<float> resl = new OperationChain<float>(ante).Then(NumericOperation.Divide, cons, true);
+      if(normalize)
+      {
+        resl.Then(NumericOperation.Minimum, 0f.Wrap())
+          .Then(NumericOperation.Maximum, 1f.Wrap());
+      }
+      if(baseOne)
+      {
+        resl.Then(NumericOperation.Add, 1f.Wrap());
+      }
+      return resl.Then(NumericOperation.Multiply, value, true);
+    }
+
+    public static OperationChain<double> RatioScale(IValueWrapper<double> value, IValueWrapper<double> ante, IValueWrapper<double> cons,
+      bool baseOne = false, bool normalize = false)
+    {
+      OperationChain<double> resl = new OperationChain<double>(ante).Then(NumericOperation.Divide, cons, true);
+      if(normalize)
+      {
+        resl.Then(NumericOperation.Minimum, 0d.Wrap())
+          .Then(NumericOperation.Maximum, 1d.Wrap());
+      }
+      if(baseOne)
+      {
+        resl.Then(NumericOperation.Add, 1d.Wrap());
+      }
+      return resl.Then(NumericOperation.Multiply, value, true);
+    }
 
     internal static OperationStep<T> Step<T>(NumericOperation operation, IValueWrapper<T> operands, bool required = false) where T : unmanaged
     {

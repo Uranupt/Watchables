@@ -3,7 +3,7 @@
 
 namespace Watchables
 { 
-  public abstract class CompositeValueBase<TValue, TSelf> : OwnableBase, IValueWrapper<TValue> where TSelf : CompositeValueBase<TValue, TSelf>
+  public abstract class CompositePartBase<TValue, TSelf> : OwnableBase, IValueWrapper<TValue> where TSelf : CompositePartBase<TValue, TSelf>
   {
 
     public event Action<TSelf> Removed;
@@ -11,7 +11,7 @@ namespace Watchables
     public CompositePartPriority Priority { get; protected set;  }
     public bool IsValid => Value != null;
 
-    protected CompositeValueBase(IValueWrapper<TValue> value, CompositePartPriority priority)
+    protected CompositePartBase(IValueWrapper<TValue> value, CompositePartPriority priority)
     {
       Value = value;
       Priority = priority;
@@ -21,7 +21,7 @@ namespace Watchables
       }
     }
 
-    public static implicit operator TValue(CompositeValueBase<TValue, TSelf> cvb) => cvb.ToValue();
+    public static implicit operator TValue(CompositePartBase<TValue, TSelf> cvb) => cvb.ToValue();
 
     public TValue ToValue() => IsValid ? Value.ToValue() : default;
 

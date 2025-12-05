@@ -5,7 +5,7 @@ namespace Watchables
   public readonly struct UnsignedOperation
   {
 
-    internal readonly NumericOperation Operation;
+    internal readonly NumericOperation Value;
 
     public static UnsignedOperation Add => new(NumericOperation.Add);
     public static UnsignedOperation Subtract => new(NumericOperation.Subtract);
@@ -18,11 +18,11 @@ namespace Watchables
 
     internal UnsignedOperation(NumericOperation operation)
     {
-      Operation = operation;
+      Value = operation;
     }
 
-    public static implicit operator SignedOperation(UnsignedOperation operation) => new(operation.Operation);
-    public static implicit operator RealOperation(UnsignedOperation operation) => new(operation.Operation); 
+    public static implicit operator IntegerOperation(UnsignedOperation operation) => new(operation.Value);
+    public static implicit operator NumericOperation(UnsignedOperation operation) => operation.Value;
 
   }
 }

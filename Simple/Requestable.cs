@@ -21,35 +21,23 @@ namespace Watchables
 			_value = DefaultState;
 		}
 
-		public void AddRequest(object requester)
+		public bool AddRequest(object requester) => MutationGuard(() => _requesters.Add(requester));
+		public bool RemoveRequest(object requester) => MutationGuard(() => _requesters.Remove(requester));
+
+		public bool Clear(object owner = null)
 		{
-			if(_requesters.Add(requester))
-			{
-        Evaluate();
-      }			
+			if(IsOwned && !CompareToOwner(owner)) { return false; }
+			return MutationGuard(_requesters.Clear);
 		}
 
-		public void RemoveRequest(object requester)
+		protected override void BeforeChanged()
 		{
-      if(_requesters.Remove(requester))
-      {
-        Evaluate();
-      }
-    }
-
-		public void Clear()
-		{
-			_requesters.Clear();
-			_value = DefaultState;
-			InvokeChanged();
+			Evaluate();
 		}
 
 		private void Evaluate()
 		{
-			bool state = DefaultState ? _requesters.Count == 0 : _requesters.Count > 0;
-			if(state == _value) { return; }
-			_value = state;
-      InvokeChanged();
+      _value = DefaultState ? _requesters.Count == 0 : _requesters.Count > 0;
     }
 
 	}

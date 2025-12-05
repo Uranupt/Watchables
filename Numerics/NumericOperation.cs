@@ -2,7 +2,7 @@
 
 namespace Watchables
 {
-  internal enum NumericOperation
+  public enum NumericOperation
   {
     Add,
     Subtract,

@@ -101,7 +101,6 @@ namespace Watchables
     private void OnSourceChanged()
     {
       if(IsDestroyed) { return; }
-      Evaluate();
       InvokeChanged();
     }
 

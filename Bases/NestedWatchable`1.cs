@@ -9,22 +9,15 @@ namespace Watchables
 		protected void Register(IWatchable dependency)
 		{
 			Unregister(dependency);
-			dependency.Changed += OnDependencyChanged;
+			dependency.Changed += InvokeChanged;
 			dependency.Destroyed += OnDependencyDestroyed;
 		}
 
 		protected void Unregister(IWatchable dependency)
 		{
-      dependency.Changed -= OnDependencyChanged;
+      dependency.Changed -= InvokeChanged;
       dependency.Destroyed -= OnDependencyDestroyed;
     }
-
-		protected void OnDependencyChanged()
-		{
-			if(IsDestroyed) { return; }
-			Evaluate();
-			InvokeChanged();
-		}
 
 		protected void OnDependencyDestroyed(IWatchable dependency)
 		{
@@ -36,7 +29,7 @@ namespace Watchables
 			{
 				Unregister(dependency);
         OnNonFatalDestruction(dependency);
-				OnDependencyChanged();
+				InvokeChanged();
       }
 		}
 
@@ -46,17 +39,10 @@ namespace Watchables
       base.DestroyProtected();
     }
 
-		protected override bool MutationGuard(Action action, object owner = null)
+		protected override void BeforeChanged()
 		{
-			return base.MutationGuard(
-				() =>
-				{
-					action?.Invoke();
-					Evaluate();
-				},
-				owner
-			);
-		}
+      Evaluate();
+    }
 
 		protected virtual void OnNonFatalDestruction(IWatchable dependency)
 		{

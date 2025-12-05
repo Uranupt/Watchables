@@ -1,21 +1,18 @@
-﻿using System;
-
+﻿
 
 namespace Watchables
 {
-  public sealed class FlagsComposite<T> : CompositeBase<T, FlagsCompositePart<T>> where T : struct, Enum
+  public sealed class TagsComposite<T> : CompositeBase<Tags<T>, TagsCompositePart<T>> where T : Tag<T>
   {
 
     protected override void Evaluate()
     {
-      ulong val = 0;
-      foreach(FlagsCompositePart<T> part in _parts)
+      _value = default;
+      foreach(TagsCompositePart<T> part in _parts)
       {
-        val = part.SetTo ? val | part.ToValue().ToULong() : val & ~part.ToValue().ToULong();
+        _value = part.SetTo ? _value + part : _value - part;
       }
-      _value = val.ToEnum<T>();
     }
-
 
     protected override void Sort()
     {

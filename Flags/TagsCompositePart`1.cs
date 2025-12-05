@@ -2,7 +2,7 @@
 
 namespace Watchables
 {
-  public sealed class TagsCompositePart<T> : CompositeValueBase<Tags<T>> where T : Tag<T>
+  public sealed class TagsCompositePart<T> : CompositePartBase<Tags<T>, TagsCompositePart<T>> where T : Tag<T>
   {
 
     public bool SetTo { get; private set; }

@@ -227,7 +227,7 @@ namespace Watchables
 
     private static Exception UnsupportedException(string operation, Type type)
     {
-      return new ArgumentException($"Unhandled operation {operation} on type: '{type.Name}', only unmanaged numeric types are allowed.");
+      return new ArgumentException($"Unhandled operation {operation} on type: '{type.Name}'.");
     }
 
     private static long Pow(long x, long y)

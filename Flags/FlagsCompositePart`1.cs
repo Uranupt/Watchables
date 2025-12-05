@@ -3,7 +3,7 @@
 
 namespace Watchables
 {
-  public sealed class FlagsCompositePart<T> : CompositeValueBase<T> where T : struct, Enum
+  public sealed class FlagsCompositePart<T> : CompositePartBase<T, FlagsCompositePart<T>> where T : struct, Enum
   {
 
     public bool SetTo { get; private set;  }

@@ -27,20 +27,13 @@ namespace Watchables
       return true;
     }
 
-		public bool SetValue(T value)
-		{
-      if(IsSealed || IsDestroyed) { return false; }
-      _value = value;
-      return true;
-    }
-
     /// <summary> </summary>
-    public bool SetValue(T value, object owner = null)
+    public bool SetValue(T value, object owner = null) => MutationGuard(() => _value = value, owner);
+
+		protected override bool MutationGuard(Action action, object owner = null)
 		{
-			if((IsSealed && !IsOwned) || !CanEdit(owner) { return false; }
-			_value = value;
-			InvokeChanged();
-			return true;
+			if(IsSealed && !CompareToOwner(owner)) { return false; }
+			return base.MutationGuard(action, owner);
 		}
 
 	}

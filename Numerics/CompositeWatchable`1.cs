@@ -3,6 +3,11 @@ using System.Collections.Generic;
 
 namespace Watchables
 {
+  /// <summary>
+  /// Numeric implementation of <see cref="CompositeBase{TValue, TPart}"/>. Will always evaluate operations by performing translation
+  /// first, then scaling, and finally clamping. Setting operations will be sorted by <see cref="CompositePartPriority"/>, with the first encountered
+  /// at the highest present priority being chosen.
+  /// </summary>
   public sealed class CompositeWatchable<T> : CompositeBase<T, CompositePart<T>>, IEnforceNumeric<T> where T : unmanaged
   {
 
@@ -11,6 +16,7 @@ namespace Watchables
       NumericUtility.ValidateType(typeof(T));
     }
 
+    /// <inheritdoc/>
     protected override void Evaluate()
     {
       for(int i = 0; i < _parts.Count; i++)
@@ -20,12 +26,12 @@ namespace Watchables
         {
           case CompositeOperation.Force:
           {
-            _value = part;
+            Value = part;
             return;
           }
           case CompositeOperation.SetFinal:
           {
-            _value = part;
+            Value = part;
             while(i < _parts.Count && _parts[i].Operation < CompositeOperation.Minimum)
             {
               i++;
@@ -34,7 +40,7 @@ namespace Watchables
           }
           case CompositeOperation.SetBase:
           {
-            _value = part;
+            Value = part;
             while(i < _parts.Count && _parts[i].Operation <= CompositeOperation.SetBase)
             {
               i++;
@@ -48,13 +54,14 @@ namespace Watchables
           case CompositeOperation.Minimum:
           case CompositeOperation.Maximum:
           {
-            _value = _value.Operate(part.Operation.ToNumeric(), part.ToValue(), true);
+            Value = Value.Operate(part.Operation.ToNumeric(), part.Value, true);
             break;
           }
         }
       }
     }
 
+    /// <inheritdoc/>
     protected override void Sort()
     {
       _parts.Sort(

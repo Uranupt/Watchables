@@ -2,15 +2,23 @@
 
 namespace Watchables
 {
+  /// <summary>
+  /// Implementation of <see cref="CompositePartBase{TValue, TPart}"/> for <see cref="Tag{T}"/> types.
+  /// </summary>
   public sealed class TagsCompositePart<T> : CompositePartBase<Tags<T>, TagsCompositePart<T>> where T : Tag<T>
   {
 
-    public bool SetTo { get; private set; }
+    /// <summary> Whether to add or remove the targeted <typeparamref name="T"/> values from the composite. </summary>
+    public bool Add { get; private set; }
 
-    public TagsCompositePart(IValueWrapper<Tags<T>> value, bool setTo = true, CompositePartPriority priority = CompositePartPriority.None)
+    /// <param name="add"> 
+    /// Whether to add (<see langword="true"/>) or remove (<see langword="false"/>) the targeted <typeparamref name="T"/>
+    /// values from the composite.
+    /// </param>
+    public TagsCompositePart(IWrapper<Tags<T>> value, bool add = true, CompositePartPriority priority = CompositePartPriority.None)
       : base(value, priority)
     {
-      SetTo = setTo;
+      Add = add;
     }
 
   }

@@ -2,7 +2,12 @@ using System;
 
 
 namespace Watchables
-{ 
+{
+  /// <summary>
+  /// An <see cref="IWatchable{T}"/> implementation which converts one <see cref="IConvertible"/> type to another.
+  /// </summary>
+  /// <typeparam name="TSource"> The type to convert from. </typeparam>
+  /// <typeparam name="TValue"> The type to convert to. </typeparam>
   public sealed class ConversionWatchable<TSource, TValue> : NestedWatchable<TValue>
     where TSource : IConvertible
     where TValue : IConvertible
@@ -16,15 +21,17 @@ namespace Watchables
       Register(_source);
     }
 
+    /// <inheritdoc/>
     protected override bool CheckFatalDestruction(IWatchable dependency) => true;
 
+    /// <inheritdoc/>
     protected override void Evaluate()
     {
-      _value =
-      _value = (TValue)Convert.ChangeType(_source.ToValue(), typeof(TValue));
+      Value = (TValue)Convert.ChangeType(_source.Value, typeof(TValue));
     }
 
-    protected override void OnDestroyed(IWatchable self)
+    /// <inheritdoc/>
+    protected override void BeforeDestroyed()
     {
       Unregister(_source);
       _source = null;

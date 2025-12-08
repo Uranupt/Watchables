@@ -3,7 +3,10 @@ using System;
 
 namespace Watchables
 {
-	public sealed class BasicWatchable<T> : WatchableBase<T>, ISealable
+  /// <summary>
+  /// An implementation of <see cref="IWatchable{T}"/> which is directly mutable via <see cref="SetValue"/>.
+  /// </summary>
+  public sealed class BasicWatchable<T> : WatchableBase<T>, ISealable
 	{
 
 		/// <inheritdoc/>
@@ -16,7 +19,7 @@ namespace Watchables
 
 		public BasicWatchable(T value)
 		{
-      _value = value;
+      Value = value;
 		}
 
     /// <inheritdoc/>
@@ -27,10 +30,13 @@ namespace Watchables
       return true;
     }
 
-    /// <summary> </summary>
-    public bool SetValue(T value, object owner = null) => MutationGuard(() => _value = value, owner);
+    /// <summary> Attempts to set the <paramref name="value"/>. </summary>
+    /// <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+    /// <returns> Whether the operation was allowed. </returns>
+    public bool SetValue(T value, object owner = null) => MutationGuard(() => Value = value, owner);
 
-		protected override bool MutationGuard(Action action, object owner = null)
+    /// <inheritdoc/>
+    protected override bool MutationGuard(Action action, object owner = null)
 		{
 			if(IsSealed && !CompareToOwner(owner)) { return false; }
 			return base.MutationGuard(action, owner);

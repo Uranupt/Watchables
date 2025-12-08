@@ -2,10 +2,15 @@
 
 namespace Watchables
 {
-  public sealed class BasicWrapper<T> : SealableBase, IValueWrapper<T>
+  /// <summary>
+  /// A mutable and sealable implementation of <see cref="IWrapper{T}"/>. 
+  /// Useful for stable value references without event and destruction semantics.
+  /// </summary>
+  public sealed class BasicWrapper<T> : SealableBase, IWrapper<T>
   {
 
-    private T _value;
+    /// <inheritdoc/>
+    public T Value { get; private set; }
 
     public BasicWrapper()
     {
@@ -14,26 +19,20 @@ namespace Watchables
 
     public BasicWrapper(T value)
     {
-      _value = value;
+      Value = value;
     }
 
-    public static implicit operator T(BasicWrapper<T> wrapper) => wrapper.ToValue();
+    public static implicit operator T(BasicWrapper<T> wrapper) => wrapper.Value;
 
-    public bool SetValue(T value)
+    /// <summary> Attempts to set the <paramref name="value"/>. </summary>
+    /// <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+    /// <returns> Whether the operation was allowed. </returns>
+    public bool SetValue(T value, object owner = null)
     {
-      if(IsSealed) { return false; }
-      _value = value;
+      if(IsSealed && !CompareToOwner(owner)) { return false; }
+      Value = value;
       return true;
     }
-
-    public bool SetValue(T value, object owner)
-    {
-      if(!CompareToOwner(owner)) { return false; }
-      _value = value;
-      return true;
-    }
-
-    public T ToValue() => _value;
 
   }
 }

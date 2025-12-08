@@ -2,22 +2,24 @@
 
 namespace Watchables
 {
-  public sealed class ReadOnlyWrapper<T> : IValueWrapper<T>
+  /// <summary>
+  /// An read-only implementation of <see cref="IWrapper{T}"/>.
+  /// </summary>
+  public sealed class ReadOnlyWrapper<T> : IWrapper<T>
   {
 
-    private readonly T _value;
+    /// <inheritdoc/>
+    public T Value { get; private set; }
 
     public ReadOnlyWrapper(T value)
     {
-      _value = value;
+      Value = value;
     }
 
-    public static implicit operator T(ReadOnlyWrapper<T> wrapper) => wrapper.ToValue();
-    public static implicit operator ReadOnlyWrapper<T>(T value) => new ReadOnlyWrapper<T>(value);
+    public static implicit operator T(ReadOnlyWrapper<T> wrapper) => wrapper.Value;
 
-    public T ToValue() => _value;
     /// <summary> Returns a string representation of the underlying value. </summary>
-    public override string ToString() => _value.ToString();
+    public override string ToString() => Value.ToString();
 
   }
 }

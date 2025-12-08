@@ -11,7 +11,8 @@ namespace Watchables
     /// <summary> Whether this instance is currently sealed. </summary>
     bool IsSealed { get; }
 
-    /// <summary> Attempts to set the sealed state of this instance. Requires the current owner if one exists. </summary>
+    /// <summary> Attempts to set the sealed state of this instance. Requires the current <paramref name="owner"/> if one exists. </summary>
+    /// <returns> Whether the operation was allowed. </returns>
     bool SetSealed(bool sealedState, object owner = null);
 
   }

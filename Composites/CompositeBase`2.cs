@@ -3,105 +3,59 @@
 
 namespace Watchables
 {
-  public abstract class CompositeBase<TValue, TPart> : NestedWatchable<TValue> where TPart : CompositePartBase<TValue, TPart>
+  /// <summary>
+  /// Extension base class of <see cref="CompositeBase{T}"/> which implements <see cref="IWatchable{T}"/>, adding value definition.
+  /// </summary>
+  /// <typeparam name="TValue"> The contained value type. </typeparam>
+  /// <typeparam name="TPart"> The type of part used to compose. </typeparam>
+  public abstract class CompositeBase<TValue, TPart> : CompositeBase<TPart>, IWatchable<TValue> where TPart : CompositePartBase<TValue, TPart>
   {
 
-    protected readonly List<TPart> _parts = new();
+    private ReadOnlyWatchable<TValue> _readOnlyWrapper;
 
-    public void AddPart(TPart part)
+    /// <summary> A read-only version of this instance. </summary>
+    public ReadOnlyWatchable<TValue> ReadOnlyWrapper => _readOnlyWrapper ??= new(this);
+
+    /// <inheritdoc/>
+    public TValue Value { get; protected set; }
+
+    public static implicit operator TValue(CompositeBase<TValue, TPart> watchable) => watchable.Value;
+
+    /// <summary> Returns a string representation of the underlying value. </summary>
+    public override string ToString() => Value.ToString();
+
+    /// <inheritdoc/>
+    protected override void OnPartAdded(TPart part)
     {
-      MutationGuard(
-        () =>
-        {
-          AddPartPrivate(part);
-          Sort();
-        }
-      );
-    }
-
-    public void AddParts(IEnumerable<TPart> parts)
-    {
-      MutationGuard(
-        () =>
-        {
-          foreach(TPart part in parts)
-          {
-            AddPartPrivate(part);
-          }
-          Sort();
-        }
-      );
-    }
-
-    public void RemovePart(TPart part)
-    {
-      MutationGuard(
-        () =>
-        {
-          RemovePartPrivate(part);
-          Sort();
-        }
-      );
-    }
-
-    public void RemoveParts(IEnumerable<TPart> parts)
-    {
-      MutationGuard(
-        () =>
-        {
-          foreach(TPart part in parts)
-          {
-            RemovePartPrivate(part);
-          }
-          Sort();
-        }
-      );
-    }
-
-    protected override bool CheckFatalDestruction(IWatchable dependency) => false;
-
-    protected override void OnDestroyed(IWatchable self)
-    {
-      while(_parts.Count > 0)
+      if(part.ValueSource is IWatchable)
       {
-        RemovePartPrivate(_parts[0]);
+        (part.ValueSource as IWatchable).Changed += InvokeChanged;
       }
     }
 
-    protected override void OnNonFatalDestruction(IWatchable dependency)
+    /// <inheritdoc/>
+    protected override void OnPartRemoved(TPart part)
     {
-      for(int i = 0; i < _parts.Count; i++)
+      if(part.ValueSource is IWatchable)
       {
-        if(_parts[i].Value == dependency)
-        {
-          RemovePartPrivate(_parts[i]);
-          return;
-        }
+        (part.ValueSource as IWatchable).Changed -= InvokeChanged;
       }
     }
 
-    protected abstract void Sort();
-
-    private void AddPartPrivate(TPart part)
+    /// <inheritdoc/>
+    protected override void BeforeChanged()
     {
-      if(_parts.Contains(part)) { return; }
-      _parts.Add(part);
-      if(part.Value is IWatchable)
-      {
-        Register(part.Value as IWatchable);
-      }
-      part.Removed += RemovePartPrivate;
+      Evaluate();
     }
 
-    private void RemovePartPrivate(TPart part)
-    {
-      part.Removed -= RemovePartPrivate;
-      if(!_parts.Remove(part)) { return; }
-      if(part.Value is IWatchable)
-      {
-        Unregister(part.Value as IWatchable);
-      }
-    }
+    /// <inheritdoc/>
+    protected override void ClearValue() => Value = default;
+
+    /// <summary> 
+    /// This method defines the behavior around setting the instance's value when an internal change occurs. 
+    /// Never call <see cref="WatchableBase.InvokeChanged"/> from within this method as it will cause recursion. 
+    /// </summary>
+    protected abstract void Evaluate();
 
   }
 }

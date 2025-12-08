@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Watchables
 {
-  public static class FlagsUtility
+  internal static class FlagsUtility
   {
 
     internal static T With<T>(this T value, T toWith) where T : struct, Enum => ToEnum<T>(value.ToULong() |  toWith.ToULong());

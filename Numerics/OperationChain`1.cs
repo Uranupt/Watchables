@@ -1,14 +1,19 @@
 using System.Collections.Generic;
 
+
 namespace Watchables
 {
+  /// <summary>
+  /// An <see cref="IWatchable{T}"/> implementation which represents a series of <see cref="NumericOperation"/>s performed on 
+  /// a base value in a set sequence. Operations and operands are defined by <see cref="OperationStep{T}"/>.
+  /// </summary>
   public sealed class OperationChain<T> : SealableNestedBase<T>, IEnforceNumeric<T> where T : unmanaged
   {
 
     private readonly List<OperationStep<T>> _steps = new();
-    private IValueWrapper<T> _baseValue;
+    private IWrapper<T> _baseValue;
 
-    public OperationChain(IValueWrapper<T> baseValue)
+    public OperationChain(IWrapper<T> baseValue)
     {
       NumericUtility.ValidateType(typeof(T));
       _baseValue = baseValue;
@@ -18,14 +23,25 @@ namespace Watchables
       }
     }
 
+    /// <summary> Attempts to add a new <see cref="OperationStep{T}"/> to the <see cref="OperationChain{T}"/>. </summary>
+    /// <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+    /// <returns> Whether the operation was allowed. </returns>
     public bool AddStep(OperationStep<T> step, object owner = null) => MutationGuard(() => AddStepPrivate(step), owner);
 
+
+    /// <summary> Attempts to add a new <see cref="OperationStep{T}"/> to the <see cref="OperationChain{T}"/>. </summary>
+    /// <remarks> Allows for method chaining the addition of <see cref="OperationStep{T}"/>s. </remarks>
+    /// <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+    /// <returns> The <see cref="OperationChain{T}"/> this was called on. </returns>
     public OperationChain<T> Then(OperationStep<T> step, object owner = null)
     {
       AddStep(step, owner);
       return this;
     }
 
+    /// <summary> Attempts to add a range of new <see cref="OperationStep{T}"/>s to the <see cref="OperationChain{T}"/>. </summary>
+    /// <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+    /// <returns> Whether the operation was allowed. </returns>
     public bool AddSteps(IEnumerable<OperationStep<T>> steps, object owner = null)
     {
       if(!MutationGuard(
@@ -38,8 +54,14 @@ namespace Watchables
       return true;
     }
 
+    /// <summary> Attempts to remove a <see cref="OperationStep{T}"/> from the <see cref="OperationChain{T}"/>. </summary>
+    /// <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+    /// <returns> Whether the operation was allowed. </returns>
     public bool RemoveStep(OperationStep<T> step, object owner = null) => MutationGuard(() => RemoveStepPrivate(step), owner);
 
+    /// <summary> Attempts to remove a range of <see cref="OperationStep{T}"/>s from the <see cref="OperationChain{T}"/>. </summary>
+    /// <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+    /// <returns> Whether the operation was allowed. </returns>
     public bool RemoveSteps(IEnumerable<OperationStep<T>> steps, object owner = null)
     {
       if(!MutationGuard(
@@ -52,13 +74,14 @@ namespace Watchables
       return true;
     }
 
+    /// <inheritdoc/>
     protected override void OnNonFatalDestruction(IWatchable dependency)
     {
-      if(dependency is not IValueWrapper<T>) { return; }
-      IValueWrapper<T> castDep = dependency as IValueWrapper<T>;
+      if(dependency is not IWrapper<T>) { return; }
+      IWrapper<T> castDep = dependency as IWrapper<T>;
       for(int i = 0; i < _steps.Count; i++)
       {
-        if(_steps[i].Value == castDep)
+        if(_steps[i].ValueSource == castDep)
         {
           RemoveStepPrivate(_steps[i]);
           break;
@@ -67,24 +90,26 @@ namespace Watchables
       Evaluate();
     }
 
+    /// <inheritdoc/>
     protected override bool CheckFatalDestruction(IWatchable dependency)
     {
-      if(dependency is not IValueWrapper<T> wrapper) { return false; }
+      if(dependency is not IWrapper<T> wrapper) { return false; }
       if(wrapper == _baseValue) { return true; }
       foreach(OperationStep<T> step in _steps)
       {
-        if(step.Value == wrapper) { return step.IsRequired; }
+        if(step.ValueSource == wrapper) { return step.IsRequired; }
       }
       return false;
     }
 
-    protected override void OnDestroyed(IWatchable self)
+    /// <inheritdoc/>
+    protected override void BeforeDestroyed()
     {
       foreach(OperationStep<T> step in _steps)
       {
-        if(step.Value != null && step.Value is IWatchable)
+        if(step.ValueSource != null && step.ValueSource is IWatchable)
         {
-          Unregister(step.Value as IWatchable);
+          Unregister(step.ValueSource as IWatchable);
         }
       }
       _steps.Clear();
@@ -95,30 +120,31 @@ namespace Watchables
       _baseValue = null;
     }
 
+    /// <inheritdoc/>
     protected override void Evaluate()
     {
-      _value = _baseValue.ToValue();
+      Value = _baseValue.Value;
       foreach(OperationStep<T> step in _steps)
       {
-        _value.Operate(step.Operation, step.Value.ToValue(), true);
+        Value.Operate(step.Operation, step.Value, true);
       }
     }
 
     private void AddStepPrivate(OperationStep<T> step)
     {
       _steps.Add(step);
-      if(step.Value is IWatchable)
+      if(step.ValueSource is IWatchable)
       {
-        Register(step.Value as IWatchable);
+        Register(step.ValueSource as IWatchable);
       }
     }
 
     private void RemoveStepPrivate(OperationStep<T> step)
     {
       _steps.Remove(step);
-      if(step.Value is IWatchable)
+      if(step.ValueSource is IWatchable)
       {
-        Unregister(step.Value as IWatchable);
+        Unregister(step.ValueSource as IWatchable);
       }
     }
 

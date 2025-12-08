@@ -2,17 +2,23 @@
 
 namespace Watchables
 {
+  /// <summary>
+  /// Represents a single operation defined by <see cref="NumericOperation"/>. Must be constructed via <see cref="OperationBuilder"/>'s 
+  /// Watchable overload methods to ensure valid operations for the given type.
+  /// </summary>
   public sealed class OperationWatchable<T> : NestedWatchable<T>, IEnforceNumeric<T> where T : unmanaged
   {
 
-    private IValueWrapper<T> _base;
-    private IValueWrapper<T> _operand;
-    internal readonly NumericOperation _operation;
+    private IWrapper<T> _base;
+    private IWrapper<T> _operand;
 
-    internal OperationWatchable(NumericOperation op, IValueWrapper<T> baseValue, IValueWrapper<T> operand = null) : base()
+    /// <summary> The operation this instance performs. </summary>
+    public readonly NumericOperation Operation;
+
+    internal OperationWatchable(NumericOperation op, IWrapper<T> baseValue, IWrapper<T> operand = null)
     {
       NumericUtility.ValidateType(typeof(T));
-      _operation = op;
+      Operation = op;
       _base = baseValue;
       _operand = operand ?? new ReadOnlyWrapper<T>(default);
       if(_base is IWatchable)
@@ -25,17 +31,20 @@ namespace Watchables
       }
     }
 
+    /// <inheritdoc/>
     protected override void Evaluate()
     {
-      _value = _base.ToValue().Operate(_operation, _operand.ToValue(), true);
+      Value = _base.Value.Operate(Operation, _operand.Value, true);
     }
 
+    /// <inheritdoc/>
     protected override bool CheckFatalDestruction(IWatchable dependency)
     {
       return dependency == _base || dependency == _operand;
     }
 
-    protected override void OnDestroyed(IWatchable self)
+    /// <inheritdoc/>
+    protected override void BeforeDestroyed()
     {
       if(_base is IWatchable)
       {

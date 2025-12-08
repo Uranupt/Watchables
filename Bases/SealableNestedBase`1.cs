@@ -20,6 +20,7 @@ namespace Watchables
       return true;
     }
 
+    /// <inheritdoc/>
     protected override bool MutationGuard(Action action, object owner = null)
     {
       if(IsSealed && !CompareToOwner(owner)) { return false; }

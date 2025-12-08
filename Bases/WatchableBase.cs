@@ -9,7 +9,7 @@ namespace Watchables
 	public abstract class WatchableBase : OwnableBase, IWatchable
 	{
 
-    protected bool _isUpdating;
+    private bool _isUpdating;
 
     /// <inheritdoc/>
     public bool IsDestroyed { get; private set; } = false;
@@ -40,7 +40,7 @@ namespace Watchables
 			return base.ClearOwner(owner);
 		}
 
-		/// <summary> Clears and cleans up any contained values of this instance. </summary>
+		/// <summary> This method clears and cleans up any contained values of this instance. </summary>
 		protected abstract void ClearValue();
 
     /// <summary> 
@@ -67,18 +67,23 @@ namespace Watchables
 			}
 		}
 
-		/// <summary> Authoritatively mark the instance as destroyed and clean up any values and listeners. </summary>
+		/// <summary> Authoritatively marks the instance as destroyed and cleans up any values and listeners. </summary>
 		protected void DestroyProtected()
 		{
 			_owner = null;
 			IsDestroyed = true;
 			ClearValue();
+			BeforeDestroyed();
 			Destroyed?.Invoke(this);
 			Destroyed = null;
-      ClearListeners();
+      Changed = null;
+      Destroyed = null;
     }
 
-		/// <summary> Attempt to perform a provided mutation. Derived types can override this to define additional mutation-locked states. </summary>
+		/// <summary> 
+		/// Attempt to perform a provided mutation and then call <see cref="InvokeChanged"/>. 
+		/// Derived types can override this to define additional mutation-locked states. 
+		/// </summary>
 		/// <param name="action"> The mutation to perform. </param>
 		/// <param name="owner"> The instance's current owner. </param>
 		/// <returns> If the mutation was successful. </returns>
@@ -96,10 +101,10 @@ namespace Watchables
 
 		}
 
-		protected void ClearListeners()
+    /// <summary> Override this method to define behavior directly before <see cref="Destroyed"/> is invoked. </summary>
+    protected virtual void BeforeDestroyed()
 		{
-			Changed = null;
-			Destroyed = null;
+
 		}
 
 	}

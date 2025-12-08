@@ -3,7 +3,7 @@
 namespace Watchables
 {
   /// <summary>
-  /// Base class for <see cref="IOwnable"/>, providing common implementation of the interface.
+  /// Base class for <see cref="IOwnable"/>, providing common implementation of ownership semantics.
   /// </summary>
   public abstract class OwnableBase : IOwnable
   {

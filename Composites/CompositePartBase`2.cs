@@ -2,58 +2,55 @@
 
 
 namespace Watchables
-{ 
-  public abstract class CompositePartBase<TValue, TSelf> : OwnableBase, IValueWrapper<TValue> where TSelf : CompositePartBase<TValue, TSelf>
+{
+  /// <summary>
+  /// Extension base class of <see cref="CompositePartBase{T}"/>, adding value definition by implementing <see cref="IWrapper{T}"/>.
+  /// </summary>
+  /// <typeparam name="TValue"> The contained value type. </typeparam>
+  /// <typeparam name="TSelf"> The self-referential type. </typeparam>
+  public abstract class CompositePartBase<TValue, TSelf> : CompositePartBase<TSelf>, IWrapper<TValue> where TSelf : CompositePartBase<TValue, TSelf>
   {
 
-    public event Action<TSelf> Removed;
-    public IValueWrapper<TValue> Value { get; protected set;  }
-    public CompositePartPriority Priority { get; protected set;  }
-    public bool IsValid => Value != null;
+    /// <summary> The source of the part's <typeparamref name="TValue"/> value. </summary>
+    public IWrapper<TValue> ValueSource { get; protected set;  }
 
-    protected CompositePartBase(IValueWrapper<TValue> value, CompositePartPriority priority)
+    /// <inheritdoc/>
+    public TValue Value => IsValid ? ValueSource.Value : default;
+
+    /// <summary> Whether the part's <see cref="ValueSource"/> is still present. </summary>
+    public bool IsValid => ValueSource != null;
+
+    protected CompositePartBase(IWrapper<TValue> value, CompositePartPriority priority) : base(priority)
     {
-      Value = value;
-      Priority = priority;
+      ValueSource = value;
       if(value is IWatchable watchable)
       {
         watchable.Destroyed += OnValueDestroyed;
       }
     }
 
-    public static implicit operator TValue(CompositePartBase<TValue, TSelf> cvb) => cvb.ToValue();
+    public static implicit operator TValue(CompositePartBase<TValue, TSelf> part) => part.Value;
 
-    public TValue ToValue() => IsValid ? Value.ToValue() : default;
-
+    /// <inheritdoc/>
     public override bool SetOwner(object owner)
     {
       if(!IsValid) { return false; }
       return base.SetOwner(owner);
     }
 
+    /// <inheritdoc/>
     public override bool ClearOwner(object owner)
     {
       if(!IsValid) { return false; }
       return base.ClearOwner(owner);
     }
 
-    public bool Remove(object owner = null)
-    {
-      if(IsOwned && !CompareToOwner(owner)) { return false; }
-      Removed?.Invoke((TSelf)this);
-      return true;
-    }
-
-    protected void InvokeRemoved()
-    {
-      Removed?.Invoke((TSelf)this);
-    }
-
     private void OnValueDestroyed(IWatchable value)
     {
       value.Destroyed -= OnValueDestroyed;
       Remove(_owner);
-      Value = null;
+      ClearOwner(_owner);
+      ValueSource = null;
     }
 
   }

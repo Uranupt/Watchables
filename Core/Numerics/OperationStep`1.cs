@@ -10,7 +10,7 @@ namespace Watchables
   /// While possible, it is not recommended to have the same <see cref="OperationStep{T}"/> in multiple 
   /// <see cref="OperationChain{T}"/> instances unless under strict oversight.
   /// </remarks>
-  public sealed class OperationStep<T> : IWrapper<T> where T : unmanaged
+  public sealed class OperationStep<T> : IWrapper<T>, IEnforceNumeric<T> where T : unmanaged
   {
 
     /// <summary> Whether this step is required for the <see cref="OperationChain{T}"/> it is a part of. </summary>

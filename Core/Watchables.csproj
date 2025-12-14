@@ -9,10 +9,5 @@
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.CodeAnalysis" Version="4.10.0" PrivateAssets="all" />
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.10.0" PrivateAssets="all" />
-	</ItemGroup>
-
 
 </Project>

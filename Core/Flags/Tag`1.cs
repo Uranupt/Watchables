@@ -9,6 +9,7 @@ namespace Watchables
   /// with stable indices and bitmask values for use in generic and composable systems.
   /// The <see cref="Tags{T}"/> companion struct can provide <see cref="FlagsAttribute"/> behavior for implementations of this type.
   /// </summary>
+  /// <remarks>Derived types must declare a protected or private constructor.</remarks>
   /// <typeparam name="TSelf"> The self-referential type of this Tag. </typeparam>
   public abstract class Tag<TSelf> where TSelf : Tag<TSelf>
   {
@@ -17,10 +18,10 @@ namespace Watchables
     private static bool _initialized;
 
     /// <summary> All of the defined tags of this type. </summary>
-    public static IReadOnlyCollection<TSelf> AllTags => GetAllTags();
+    public static IReadOnlyCollection<TSelf> AllTags => _tags.Values;
 
     /// <summary> All of the defined names of the tags of this type. </summary>
-    public static IReadOnlyCollection<string> AllNames => GetAllNames();
+    public static IReadOnlyCollection<string> AllNames => _tags.Keys;
 
     /// <summary> A bitmask which represents the combination of the <see cref="Mask"/> of every defined tag. </summary>
     public static uint AllMask { get; private set; } = 0;
@@ -33,6 +34,17 @@ namespace Watchables
 
     /// <summary> The bitmask of this <typeparamref name="TSelf"/>. </summary>
     public uint Mask { get; private set; }
+
+    static Tag()
+    {
+      EnsureInitialized();
+    }
+
+    /// <summary> Tags should not declare any logic and must not be publicly constructible. </summary>
+    protected Tag()
+    {
+
+    }
 
     /// <summary>
     /// Retrieves the <typeparamref name="TSelf"/> instance with the given <paramref name="name"/>.
@@ -53,7 +65,6 @@ namespace Watchables
     /// <returns> If the <typeparamref name="TSelf"/> was found. </returns>
     public static bool TryGet(string name, out TSelf tag)
     {
-      EnsureInitialized();
       return _tags.TryGetValue(name, out tag);
     }
 
@@ -76,7 +87,6 @@ namespace Watchables
     /// <returns> If the <typeparamref name="TSelf"/> was found. </returns>
     public static bool TryGetFromIndex(int index, out TSelf tag)
     {
-      EnsureInitialized();
       tag = null;
       foreach(TSelf instance in _tags.Values)
       {
@@ -108,7 +118,6 @@ namespace Watchables
     /// <returns> If the <typeparamref name="TSelf"/> was found. </returns>
     public static bool TryGetFromMask(uint mask, out TSelf tag)
     {
-      EnsureInitialized();
       tag = null;
       foreach(TSelf instance in _tags.Values)
       {
@@ -125,7 +134,7 @@ namespace Watchables
     {
       if(_initialized) { return; }
       _initialized = true;
-      TSelf dummy = (TSelf)Activator.CreateInstance(typeof(TSelf), true);
+      TSelf dummy = CreateInstance();
       Span<string> names = new string[32];
       int count = dummy.GetDefinedNames(names);
       if(count > 32)
@@ -150,18 +159,6 @@ namespace Watchables
     }
 
     private static TSelf CreateInstance() => (TSelf)Activator.CreateInstance(typeof(TSelf), true);
-
-    private static IReadOnlyCollection<TSelf> GetAllTags()
-    {
-      EnsureInitialized();
-      return _tags.Values;
-    }
-
-    private static IReadOnlyCollection<string> GetAllNames()
-    {
-      EnsureInitialized();
-      return _tags.Keys;
-    }
 
     /// <summary> Gets a string containing the name of this <typeparamref name="TSelf"/> instance. </summary>
     /// <returns> The name of this <typeparamref name="TSelf"/>. </returns>

@@ -7,13 +7,16 @@ namespace Watchables
   /// An <see cref="IWatchable{T}"/> implementation wrapping an <see cref="OperationChain{T}"/> that clamps an internally managed value.
   /// Provides methods to directly set, add to, or subtract from the internal value.
   /// </summary>
+  /// <inheritdoc cref="IEnforceNumeric{T}"/>
   public sealed class ClampedWatchable<T> : SealableNestedBase<T>, IEnforceNumeric<T> where T : unmanaged
   {
 
     private OperationChain<T> _chain;
     private BasicWatchable<T> _baseValue;
 
+    /// <summary> The lower bound to clamp to. </summary>
     public IWrapper<T> Minimum { get; private set; }
+    /// <summary> The upper bound to clamp to. </summary>
     public IWrapper<T> Maximum { get; private set; }
 
     public ClampedWatchable(IWrapper<T> min, IWrapper<T> max)

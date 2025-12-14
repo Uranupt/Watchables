@@ -42,6 +42,7 @@ namespace Watchables
     /// <inheritdoc cref="NumericOperation.FlipSign"/>
     public static IntegerOperation FlipSign => new(NumericOperation.FlipSign);
 
+    /// <inheritdoc/>
     public readonly NumericOperation Value { get; }
 
     internal IntegerOperation(NumericOperation operation)

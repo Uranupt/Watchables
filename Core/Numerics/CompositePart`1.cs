@@ -4,8 +4,9 @@ using System;
 namespace Watchables
 {
   /// <summary> 
-  /// Numeric implementation of <see cref="CompositePartBase{T, CompositePart{T}}"/> for use with <see cref="CompositeWatchable{T}"/>.
+  /// Numeric implementation of <see cref="CompositePartBase{TValue, TSelf}"/> for use with <see cref="CompositeWatchable{T}"/>.
   /// </summary>
+  /// <inheritdoc cref="IEnforceNumeric{T}"/>
   public sealed class CompositePart<T> : CompositePartBase<T, CompositePart<T>>, IEnforceNumeric<T> where T : unmanaged
   {
 

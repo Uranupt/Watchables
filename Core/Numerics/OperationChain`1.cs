@@ -7,6 +7,7 @@ namespace Watchables
   /// An <see cref="IWatchable{T}"/> implementation which represents a series of <see cref="NumericOperation"/>s performed on 
   /// a base value in a set sequence. Operations and operands are defined by <see cref="OperationStep{T}"/>.
   /// </summary>
+  /// <inheritdoc cref="IEnforceNumeric{T}"/>
   public sealed class OperationChain<T> : SealableNestedBase<T>, IEnforceNumeric<T> where T : unmanaged
   {
 

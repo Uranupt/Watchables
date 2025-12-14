@@ -6,6 +6,7 @@ namespace Watchables
   /// Represents a single operation defined by <see cref="NumericOperation"/>. Must be constructed via <see cref="OperationBuilder"/>'s 
   /// Watchable overload methods to ensure valid operations for the given type.
   /// </summary>
+  /// <inheritdoc cref="IEnforceNumeric{T}"/>
   public sealed class OperationWatchable<T> : NestedWatchable<T>, IEnforceNumeric<T> where T : unmanaged
   {
 

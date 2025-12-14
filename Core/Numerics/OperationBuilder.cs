@@ -5,16 +5,12 @@ namespace Watchables
 {
   /// <summary>
   /// Static constructors for <see cref="OperationWatchable{T}"/> and <see cref="OperationStep{T}"/>, as well as 
-  /// auto constructions for common <see cref="OperationChain{T}"/> uses.
+  /// constructions for common <see cref="OperationChain{T}"/> uses.
   /// </summary>
   public static class OperationBuilder
   {
 
     #region Step
-
-    /// <inheritdoc cref="Step{T}"/>
-    public static OperationStep<ushort> Step(UnsignedOperation operation, IWrapper<ushort> operand, bool required = false)
-      => new OperationStep<ushort>(operation, operand, required);
 
     /// <inheritdoc cref="Step{T}"/>
     public static OperationStep<uint> Step(UnsignedOperation operation, IWrapper<uint> operand, bool required = false)
@@ -23,10 +19,6 @@ namespace Watchables
     /// <inheritdoc cref="Step{T}"/>
     public static OperationStep<ulong> Step(UnsignedOperation operation, IWrapper<ulong> operand, bool required = false)
       => new OperationStep<ulong>(operation, operand, required);
-
-    /// <inheritdoc cref="Step{T}"/>
-    public static OperationStep<short> Step(IntegerOperation operation, IWrapper<short> operand = null, bool required = false)
-      => new OperationStep<short>(operation, operand, required);
 
     /// <inheritdoc cref="Step{T}"/>
     public static OperationStep<int> Step(IntegerOperation operation, IWrapper<int> operand = null, bool required = false)
@@ -53,20 +45,12 @@ namespace Watchables
     #region Watchable
 
     /// <inheritdoc cref="Watchable{T}"/>
-    public static OperationWatchable<ushort> Watchable(UnsignedOperation operation, IWrapper<ushort> value, IWrapper<ushort> operand)
-      => new OperationWatchable<ushort>(operation, value, operand);
-
-    /// <inheritdoc cref="Watchable{T}"/>
     public static OperationWatchable<uint> Watchable(UnsignedOperation operation, IWrapper<uint> value, IWrapper<uint> operand)
       => new OperationWatchable<uint>(operation, value, operand);
 
     /// <inheritdoc cref="Watchable{T}"/>
     public static OperationWatchable<ulong> Watchable(UnsignedOperation operation, IWrapper<ulong> value, IWrapper<ulong> operand)
       => new OperationWatchable<ulong>(operation, value, operand);
-
-    /// <inheritdoc cref="Watchable{T}"/>
-    public static OperationWatchable<short> Watchable(IntegerOperation operation, IWrapper<short> value, IWrapper<short> operand = null)
-      => new OperationWatchable<short>(operation, value, operand);
 
     /// <inheritdoc cref="Watchable{T}"/>
     public static OperationWatchable<int> Watchable(IntegerOperation operation, IWrapper<int> value, IWrapper<int> operand = null)
@@ -103,7 +87,7 @@ namespace Watchables
     }
 
     /// <summary>
-    /// Creates a new <see cref="OperationChain{decimal}"/> which scales the <paramref name="value"/> by the ratio of the 
+    /// Creates a new <see cref="OperationChain{T}"/> which scales the <paramref name="value"/> by the ratio of the 
     /// <paramref name="ante"/>cedent to the <paramref name="cons"/>equent.
     /// <br/> If <paramref name="baseOne"/> is true, the ratio will be offset by 1 so that a ratio of 1:1 results in a doubling. 
     /// <br/> If <paramref name="normalize"/> is true, the ratio (before offset from baseOne) will be clamped between 0 and 1.
@@ -125,7 +109,7 @@ namespace Watchables
     }
 
     /// <summary>
-    /// Creates a new <see cref="OperationChain{decimal}"/> which scales the <paramref name="value"/> by the ratio of the 
+    /// Creates a new <see cref="OperationChain{T}"/> which scales the <paramref name="value"/> by the ratio of the 
     /// <paramref name="ante"/>cedent to the <paramref name="cons"/>equent.
     /// <br/> If <paramref name="baseOne"/> is true, the ratio will be offset by 1 so that a ratio of 1:1 results in a doubling. 
     /// <br/> If <paramref name="normalize"/> is true, the ratio (before offset from baseOne) will be clamped between 0 and 1.
@@ -147,7 +131,7 @@ namespace Watchables
     }
 
     /// <summary>
-    /// Creates a new <see cref="OperationChain{decimal}"/> which scales the <paramref name="value"/> by the ratio of the 
+    /// Creates a new <see cref="OperationChain{T}"/> which scales the <paramref name="value"/> by the ratio of the 
     /// <paramref name="ante"/>cedent to the <paramref name="cons"/>equent.
     /// <br/> If <paramref name="baseOne"/> is true, the ratio will be offset by 1 so that a ratio of 1:1 results in a doubling. 
     /// <br/> If <paramref name="normalize"/> is true, the ratio (before offset from baseOne) will be clamped between 0 and 1.

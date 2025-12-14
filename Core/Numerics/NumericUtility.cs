@@ -9,27 +9,6 @@ namespace Watchables
   public static class NumericUtility
   {
 
-    #region UShort
-
-    /// <inheritdoc cref="Add{T}"/>
-    public static ushort Add(this ushort value, ushort operand) => (ushort)(value + operand);
-    /// <inheritdoc cref="Subtract{T}"/>
-    public static ushort Subtract(this ushort value, ushort operand) => (ushort)(value - operand);
-    /// <inheritdoc cref="Multiply{T}"/>
-    public static ushort Multiply(this ushort value, ushort operand) => (ushort)(value * operand);
-    /// <inheritdoc cref="Divide{T}"/>
-    public static ushort Divide(this ushort value, ushort operand, bool guard = false) => (guard && operand == 0) ? (ushort)0 : (ushort)(value / operand);
-    /// <inheritdoc cref="Modulo{T}"/>
-    public static ushort Modulo(this ushort value, ushort operand, bool guard = false) => (guard && operand == 0) ? (ushort)0 : (ushort)(value % operand);
-    /// <inheritdoc cref="Power{T}"/>
-    public static ushort Power(this ushort value, ushort operand) => (ushort)UPow(value, operand);
-    /// <inheritdoc cref="GreaterOf{T}"/>
-    public static ushort GreaterOf(this ushort value, ushort operand) => value < operand ? operand : value;
-    /// <inheritdoc cref="LesserOf{T}"/>
-    public static ushort LesserOf(this ushort value, ushort operand) => value > operand ? operand : value;
-
-    #endregion
-
     #region UInt
 
     /// <inheritdoc cref="Add{T}"/>
@@ -69,33 +48,6 @@ namespace Watchables
     public static ulong GreaterOf(this ulong value, ulong operand) => value < operand ? operand : value;
     /// <inheritdoc cref="LesserOf{T}"/>
     public static ulong LesserOf(this ulong value, ulong operand) => value > operand ? operand : value;
-
-    #endregion
-
-    #region Short
-
-    /// <inheritdoc cref="Add{T}"/>
-    public static short Add(this short value, short operand) => (short)(value + operand);
-    /// <inheritdoc cref="Subtract{T}"/>
-    public static short Subtract(this short value, short operand) => (short)(value - operand);
-    /// <inheritdoc cref="Multiply{T}"/>
-    public static short Multiply(this short value, short operand) => (short)(value * operand);
-    /// <inheritdoc cref="Divide{T}"/>
-    public static short Divide(this short value, short operand, bool guard = false) => (guard && operand == 0) ? (short)0 : (short)(value / operand);
-    /// <inheritdoc cref="Modulo{T}"/>
-    public static short Modulo(this short value, short operand, bool guard = false) => (guard && operand == 0) ? (short)0 : (short)(value % operand);
-    /// <inheritdoc cref="Power{T}"/>
-    public static short Power(this short value, short operand) => (short)Pow(value, operand);
-    /// <inheritdoc cref="GreaterOf{T}"/>
-    public static short GreaterOf(this short value, short operand) => value < operand ? operand : value;
-    /// <inheritdoc cref="LesserOf{T}"/>
-    public static short LesserOf(this short value, short operand) => value > operand ? operand : value;
-    /// <inheritdoc cref="Absolute{T}"/>
-    public static short Absolute(this short value) => value < 0 ? (short)-value : value;
-    /// <inheritdoc cref="AsNegative{T}"/>
-    public static short AsNegative(this short value) => value > 0 ? (short)-value : value;
-    /// <inheritdoc cref="FlipSign{T}"/>
-    public static short FlipSign(this short value) => (short)-value;
 
     #endregion
 
@@ -354,10 +306,8 @@ namespace Watchables
     {
       switch (Type.GetTypeCode(type))
       {
-        case TypeCode.UInt16:
         case TypeCode.UInt32:
         case TypeCode.UInt64:
-        case TypeCode.Int16:
         case TypeCode.Int32:
         case TypeCode.Int64:
         case TypeCode.Decimal:
@@ -368,7 +318,7 @@ namespace Watchables
         }
         default:
         {
-          throw new ArgumentException($"Type of {type.Name} not valid. Only numeric unmanaged types are allowed.");
+          throw new ArgumentException($"Type of {type.Name} not valid. Only numeric Types specified by {typeof(IEnforceNumeric<>).Name} are allowed.");
         }
       }
     }

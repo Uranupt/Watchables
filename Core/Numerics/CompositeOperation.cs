@@ -24,7 +24,7 @@ namespace Watchables
     Divide,
     /// <summary> Define a minimum value to check against after translation and scaling. </summary>
     Minimum,
-    /// <summary> Define a maximum value to check against after translation and scaling. </summary>
+    /// <summary> Define a maximum value to check against after translation and scaling, and after minimum. </summary>
     Maximum
   }
 

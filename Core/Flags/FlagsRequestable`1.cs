@@ -8,7 +8,7 @@ namespace Watchables
   /// Allows for objects to request bits of the <see cref="FlagsAttribute"/> marked <see cref="Enum"/> type <typeparamref name="T"/>
   /// be set. The value of this instance will be the combination of all currently requested values.
   /// </summary>
-  public sealed class FlagRequestable<T> : WatchableBase<T> where T : struct, Enum
+  public sealed class FlagsRequestable<T> : WatchableBase<T> where T : struct, Enum
   {
 
     private readonly Dictionary<object, T> _requests = new();

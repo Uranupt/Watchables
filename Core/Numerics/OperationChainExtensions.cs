@@ -12,13 +12,6 @@ namespace Watchables
     #region Then
 
     /// <inheritdoc cref="OperationChain{T}.Then"/>
-    public static OperationChain<ushort> Then(this OperationChain<ushort> chain, UnsignedOperation operation, IWrapper<ushort> operand,
-      bool required = false, object owner = null)
-    {
-      return chain.Then(OperationBuilder.Step(operation, operand, required), owner);
-    }
-
-    /// <inheritdoc cref="OperationChain{T}.Then"/>
     public static OperationChain<uint> Then(this OperationChain<uint> chain, UnsignedOperation operation, IWrapper<uint> operand,
       bool required = false, object owner = null)
     {
@@ -27,13 +20,6 @@ namespace Watchables
 
     /// <inheritdoc cref="OperationChain{T}.Then"/>
     public static OperationChain<ulong> Then(this OperationChain<ulong> chain, UnsignedOperation operation, IWrapper<ulong> operand,
-      bool required = false, object owner = null)
-    {
-      return chain.Then(OperationBuilder.Step(operation, operand, required), owner);
-    }
-
-    /// <inheritdoc cref="OperationChain{T}.Then"/>
-    public static OperationChain<short> Then(this OperationChain<short> chain, IntegerOperation operation, IWrapper<short> operand,
       bool required = false, object owner = null)
     {
       return chain.Then(OperationBuilder.Step(operation, operand, required), owner);
@@ -79,13 +65,6 @@ namespace Watchables
     #region AddStep
 
     /// <inheritdoc cref="OperationChain{T}.AddStep"/>
-    public static bool AddStep(this OperationChain<ushort> chain, UnsignedOperation operation, IWrapper<ushort> operand,
-      bool required = false, object owner = null)
-    {
-      return chain.AddStep(OperationBuilder.Step(operation, operand, required), owner);
-    }
-
-    /// <inheritdoc cref="OperationChain{T}.AddStep"/>
     public static bool AddStep(this OperationChain<uint> chain, UnsignedOperation operation, IWrapper<uint> operand,
       bool required = false, object owner = null)
     {
@@ -94,13 +73,6 @@ namespace Watchables
 
     /// <inheritdoc cref="OperationChain{T}.AddStep"/>
     public static bool AddStep(this OperationChain<ulong> chain, UnsignedOperation operation, IWrapper<ulong> operand,
-      bool required = false, object owner = null)
-    {
-      return chain.AddStep(OperationBuilder.Step(operation, operand, required), owner);
-    }
-
-    /// <inheritdoc cref="OperationChain{T}.AddStep"/>
-    public static bool AddStep(this OperationChain<short> chain, IntegerOperation operation, IWrapper<short> operand,
       bool required = false, object owner = null)
     {
       return chain.AddStep(OperationBuilder.Step(operation, operand, required), owner);

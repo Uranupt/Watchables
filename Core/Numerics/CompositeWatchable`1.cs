@@ -8,6 +8,7 @@ namespace Watchables
   /// first, then scaling, and finally clamping. Setting operations will be sorted by <see cref="CompositePartPriority"/>, with the first encountered
   /// at the highest present priority being chosen.
   /// </summary>
+  /// <inheritdoc cref="IEnforceNumeric{T}"/>
   public sealed class CompositeWatchable<T> : CompositeBase<T, CompositePart<T>>, IEnforceNumeric<T> where T : unmanaged
   {
 

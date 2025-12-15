@@ -169,7 +169,7 @@ namespace Watchables
     /// May not exceed 32 values. It is recommended to create static
     /// <typeparamref name="TSelf"/> properties in the implementation which call <see cref="Get"/> matching each of these names.
     /// </summary>
-    /// <param name="names"> The <see cref="Span{string}"/> to fill with defined names. </param>
+    /// <param name="names"> The <see cref="Span{T}"/> to fill with defined names. </param>
     /// <returns> The number of defined names. </returns>
     protected abstract int GetDefinedNames(Span<string> names);
 

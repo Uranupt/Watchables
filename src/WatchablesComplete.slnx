@@ -1,4 +1,0 @@
-<Solution>
-  <Project Path="Analyzer/Watchables.Analyzers/Watchables.Analyzers.csproj" />
-  <Project Path="Core/Watchables.csproj" />
-</Solution>

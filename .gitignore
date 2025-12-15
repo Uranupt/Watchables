@@ -1,5 +1,0 @@
-*.meta
-.vs/
-bin/
-obj/
-*.csproj.user

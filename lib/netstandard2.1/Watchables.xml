@@ -1,0 +1,2310 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Watchables</name>
+    </assembly>
+    <members>
+        <member name="T:Watchables.IAsReadOnly`1">
+            <summary>
+            Extension of <see cref="T:Watchables.IWatchable`1"/> providing the <see cref="M:Watchables.IAsReadOnly`1.AsReadOnly"/> method to attain a read-only view of the instance
+            with an identical value, lifetime, and change propagation.
+            </summary>
+        </member>
+        <member name="M:Watchables.IAsReadOnly`1.AsReadOnly">
+            <summary> Returns a read-only view of this instance. </summary>
+        </member>
+        <member name="T:Watchables.IOwnable">
+            <summary>
+            Interface for checking and controlling instance ownership.
+            </summary>
+        </member>
+        <member name="P:Watchables.IOwnable.IsOwned">
+            <summary>  Whether this instance currently has a defined owner. </summary>
+        </member>
+        <member name="M:Watchables.IOwnable.SetOwner(System.Object)">
+            <summary> Attempts to set this instance's <paramref name="owner"/>, provided it does not already have one. </summary>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.IOwnable.ClearOwner(System.Object)">
+            <summary> Attempts to clear this instance's <paramref name="owner"/>. </summary>
+            <param name="owner"> The current owner. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.IOwnable.CompareToOwner(System.Object)">
+            <summary> Compares the given object to this instance's owner. </summary>
+            <returns> <see langword="true"/> if the instance is owned and the <paramref name="owner"/> matches; otherwise <see langword="false"/>. </returns>
+        </member>
+        <member name="T:Watchables.ISealable">
+            <summary>
+            Extension interface of <see cref="T:Watchables.IOwnable"/> which further allows for explicit sealing of mutation alongside ownership.
+            </summary>
+        </member>
+        <member name="P:Watchables.ISealable.IsSealed">
+            <summary> Whether this instance is currently sealed. </summary>
+        </member>
+        <member name="M:Watchables.ISealable.SetSealed(System.Boolean,System.Object)">
+            <summary> Attempts to set the sealed state of this instance. Requires the current <paramref name="owner"/> if one exists. </summary>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="T:Watchables.IWatchable">
+            <summary>
+            Base interface for the Watchable system. Provides the core <see cref="E:Watchables.IWatchable.Changed"/> and <see cref="E:Watchables.IWatchable.Destroyed"/> events.
+            </summary>
+            <remarks> Inherits <see cref="T:Watchables.IOwnable"/>. </remarks>
+        </member>
+        <member name="P:Watchables.IWatchable.IsDestroyed">
+            <summary> Whether this instance has been destroyed. </summary>
+        </member>
+        <member name="E:Watchables.IWatchable.Changed">
+            <summary> The event fired when a change occurs. </summary>
+        </member>
+        <member name="E:Watchables.IWatchable.Destroyed">
+            <summary> The event fired when this instance is destroyed. </summary>
+        </member>
+        <member name="M:Watchables.IWatchable.Destroy(System.Object)">
+            <summary> Attempts to clear all values and listeners and mark as destroyed. Requires the current <paramref name="owner"/> if one exists. </summary>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="T:Watchables.IWatchable`1">
+            <summary>
+            Base generic interface for the Watchable system which combines <see cref="T:Watchables.IWatchable"/> and <see cref="T:Watchables.IWrapper`1"/>.
+            </summary>
+        </member>
+        <member name="T:Watchables.IWrapper`1">
+            <summary> 
+            Base interface for types which wrap an underlying value of type <typeparamref name="T"/>. Value can be retrieved through <see cref="P:Watchables.IWrapper`1.Value"/>. 
+            </summary>
+        </member>
+        <member name="P:Watchables.IWrapper`1.Value">
+            <summary> The underlying value. </summary>
+        </member>
+        <member name="T:Watchables.NestedWatchable`1">
+            <summary>
+            Extension of <see cref="T:Watchables.WatchableBase`1"/> for types which are (or have the potential to be) based on other <see cref="T:Watchables.IWatchable"/> instances.
+            </summary>
+        </member>
+        <member name="M:Watchables.NestedWatchable`1.Register(Watchables.IWatchable)">
+            <summary> Subscribes propagation callbacks to a dependency. </summary>
+        </member>
+        <member name="M:Watchables.NestedWatchable`1.Unregister(Watchables.IWatchable)">
+            <summary> Unsubscribes propagation callbacks from a dependency. </summary>
+        </member>
+        <member name="M:Watchables.NestedWatchable`1.BeforeChanged">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.NestedWatchable`1.OnNonFatalDestruction(Watchables.IWatchable)">
+            <summary> Override this method to define behavior when a non-required dependency is destroyed. </summary>
+        </member>
+        <member name="M:Watchables.NestedWatchable`1.Evaluate">
+            <summary> 
+            This method defines the behavior around setting the instance's value when an internal change occurs. 
+            Never call <see cref="M:Watchables.WatchableBase.InvokeChanged"/> from within this method as it will cause recursion. 
+            </summary>
+        </member>
+        <member name="M:Watchables.NestedWatchable`1.CheckFatalDestruction(Watchables.IWatchable)">
+            <summary> This method detemines if a destroyed dependency was required for this instance to remain alive. </summary>
+        </member>
+        <member name="T:Watchables.OwnableBase">
+            <summary>
+            Base class for <see cref="T:Watchables.IOwnable"/>, providing common implementation of ownership semantics.
+            </summary>
+        </member>
+        <member name="P:Watchables.OwnableBase.IsOwned">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.OwnableBase.SetOwner(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.OwnableBase.ClearOwner(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.OwnableBase.CompareToOwner(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Watchables.SealableBase">
+            <summary>
+            Extension of <see cref="T:Watchables.OwnableBase"/> which also implements <see cref="T:Watchables.ISealable"/>, providing common implementation.
+            </summary>
+        </member>
+        <member name="P:Watchables.SealableBase.IsSealed">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.SealableBase.SetSealed(System.Boolean,System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Watchables.SealableNestedBase`1">
+            <summary>
+            Extension of <see cref="T:Watchables.NestedWatchable`1"/> which also implements <see cref="T:Watchables.ISealable"/>.
+            </summary>
+        </member>
+        <member name="P:Watchables.SealableNestedBase`1.IsSealed">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.SealableNestedBase`1.SetSealed(System.Boolean,System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.SealableNestedBase`1.MutationGuard(System.Action,System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Watchables.WatchableBase">
+            <summary>
+            Extension of <see cref="T:Watchables.OwnableBase"/> which provides common implementation for <see cref="T:Watchables.IWatchable"/>.
+            </summary>
+        </member>
+        <member name="P:Watchables.WatchableBase.IsDestroyed">
+            <inheritdoc/>
+        </member>
+        <member name="E:Watchables.WatchableBase.Changed">
+            <inheritdoc/>
+        </member>
+        <member name="E:Watchables.WatchableBase.Destroyed">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableBase.Destroy(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableBase.SetOwner(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableBase.ClearOwner(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableBase.ClearValue">
+            <summary> This method clears and cleans up any contained values of this instance. </summary>
+        </member>
+        <member name="M:Watchables.WatchableBase.InvokeChanged">
+            <summary> 
+            Attempts to call <see cref="M:Watchables.WatchableBase.BeforeChanged"/> and then invoke the <see cref="E:Watchables.WatchableBase.Changed"/> event.
+            Will fail if this instance is destroyed. 
+            Automatically detects and will throw an error on recurrsion.
+            </summary>
+        </member>
+        <member name="M:Watchables.WatchableBase.DestroyProtected">
+            <summary> Authoritatively marks the instance as destroyed and cleans up any values and listeners. </summary>
+        </member>
+        <member name="M:Watchables.WatchableBase.MutationGuard(System.Action,System.Object)">
+            <summary> 
+            Attempt to perform a provided mutation and then call <see cref="M:Watchables.WatchableBase.InvokeChanged"/>. 
+            Derived types can override this to define additional mutation-locked states. 
+            </summary>
+            <param name="action"> The mutation to perform. </param>
+            <param name="owner"> The instance's current owner. </param>
+            <returns> If the mutation was successful. </returns>
+        </member>
+        <member name="M:Watchables.WatchableBase.BeforeChanged">
+            <summary> Override this method to define behavior directly before <see cref="E:Watchables.WatchableBase.Changed"/> is invoked. </summary>
+        </member>
+        <member name="M:Watchables.WatchableBase.BeforeDestroyed">
+            <summary> Override this method to define behavior directly before <see cref="E:Watchables.WatchableBase.Destroyed"/> is invoked. </summary>
+        </member>
+        <member name="T:Watchables.WatchableBase`1">
+            <summary>
+            Generic type extension base of <see cref="T:Watchables.WatchableBase"/>.Provides implicit casting to <typeparamref name="T"/>.
+            </summary>
+            <remarks> Implements <see cref="T:Watchables.IWatchable`1"/> and <see cref="T:Watchables.IAsReadOnly`1"/> </remarks>
+        </member>
+        <member name="P:Watchables.WatchableBase`1.Value">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableBase`1.ToString">
+            <summary> Returns a string representation of the underlying value. </summary>
+        </member>
+        <member name="M:Watchables.WatchableBase`1.AsReadOnly">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableBase`1.ClearValue">
+            <inheritdoc/>
+        </member>
+        <member name="T:Watchables.CompositeCollection`1">
+            <summary>
+            Base class extension of <see cref="T:Watchables.WatchableCollection"/> for collections built from other <see cref="T:System.Collections.Generic.IEnumerable`1"/> instances.
+            Implements <see cref="T:System.Collections.Generic.IEnumerable`1"/>
+            </summary>
+        </member>
+        <member name="P:Watchables.CompositeCollection`1.Collection">
+            <summary> The <see cref="T:System.Collections.Generic.ICollection`1"/> instance this wraps and operates on. </summary>
+        </member>
+        <member name="P:Watchables.CompositeCollection`1.Count">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeCollection`1.Contains(`0)">
+            <summary> Determines whether the collection contains the provided value. </summary>
+        </member>
+        <member name="M:Watchables.CompositeCollection`1.Add(System.Collections.Generic.IEnumerable{`0},System.Boolean,System.Object)">
+            <summary> Attempts to add the provided source to the collection. </summary>
+            <param name="owner"> The current owner of the collection, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.CompositeCollection`1.Remove(System.Collections.Generic.IEnumerable{`0},System.Object)">
+            <summary> Attempts to remove the provided source from the collection. </summary>
+            <param name="owner"> The current owner of the collection, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.CompositeCollection`1.Clear(System.Object)">
+            <summary> Attempts to clear all sources from the collection. </summary>
+            <param name="owner"> The current owner of the collection, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.CompositeCollection`1.GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeCollection`1.ClearValue">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeCollection`1.GetNonGenericEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="T:Watchables.CompositeDictionary`2">
+            <summary>
+            An implementation of <see cref="T:Watchables.CompositeCollection`1"/> which represents a <see cref="T:System.Collections.Generic.Dictionary`2"/>
+            constructed from multiple <see cref="T:System.Collections.Generic.IEnumerable`1"/> sources. Provides mirrors of many of the querying methods in
+            <see cref="T:System.Collections.Generic.Dictionary`2"/>.
+            </summary>
+        </member>
+        <member name="P:Watchables.CompositeDictionary`2.Collection">
+            <inheritdoc/>
+        </member>
+        <member name="P:Watchables.CompositeDictionary`2.Item(`0)">
+            <inheritdoc/>
+        </member>
+        <member name="P:Watchables.CompositeDictionary`2.Keys">
+            <inheritdoc/>
+        </member>
+        <member name="P:Watchables.CompositeDictionary`2.Values">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeDictionary`2.ContainsKey(`0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeDictionary`2.ContainsValue(`1)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeDictionary`2.TryGetValue(`0,`1@)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Watchables.CompositeHashSet`1">
+            <summary>
+            An implementation of <see cref="T:Watchables.CompositeCollection`1"/> which represents a <see cref="T:System.Collections.Generic.HashSet`1"/> constructed from
+            multiple <see cref="T:System.Collections.Generic.IEnumerable`1"/> sources. Provides mirrors of many of the querying methods in <see cref="T:System.Collections.Generic.HashSet`1"/>
+            </summary>
+        </member>
+        <member name="P:Watchables.CompositeHashSet`1.Collection">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeHashSet`1.IsProperSubsetOf(System.Collections.Generic.IEnumerable{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeHashSet`1.IsProperSupersetOf(System.Collections.Generic.IEnumerable{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeHashSet`1.IsSubsetOf(System.Collections.Generic.IEnumerable{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeHashSet`1.IsSupersetOf(System.Collections.Generic.IEnumerable{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeHashSet`1.Overlaps(System.Collections.Generic.IEnumerable{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeHashSet`1.SetEquals(System.Collections.Generic.IEnumerable{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="T:Watchables.CompositeList`1">
+            <summary>
+            An implementation of <see cref="T:Watchables.CompositeCollection`1"/> which represents a <see cref="T:System.Collections.Generic.List`1"/> constructed from
+            multiple <see cref="T:System.Collections.Generic.IEnumerable`1"/> sources. Provides mirrors of many of the querying methods in <see cref="T:System.Collections.Generic.List`1"/>.
+            </summary>
+        </member>
+        <member name="P:Watchables.CompositeList`1.Collection">
+            <inheritdoc/>
+        </member>
+        <member name="P:Watchables.CompositeList`1.IsAutoSorting">
+            <inheritdoc/>
+        </member>
+        <member name="P:Watchables.CompositeList`1.Item(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeList`1.AutoSort(System.Comparison{`0},System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeList`1.ClearAutoSort(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeList`1.IndexOf(`0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeList`1.IndexOf(`0,System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeList`1.IndexOf(`0,System.Int32,System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeList`1.LastIndexOf(`0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeList`1.LastIndexOf(`0,System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeList`1.LastIndexOf(`0,System.Int32,System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeList`1.Exists(System.Predicate{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeList`1.TrueForAll(System.Predicate{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeList`1.Find(System.Predicate{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeList`1.FindLast(System.Predicate{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeList`1.FindAll(System.Predicate{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeList`1.FindIndex(System.Predicate{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeList`1.FindIndex(System.Int32,System.Predicate{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeList`1.FindIndex(System.Int32,System.Int32,System.Predicate{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeList`1.FindLastIndex(System.Predicate{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeList`1.FindLastIndex(System.Int32,System.Predicate{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeList`1.FindLastIndex(System.Int32,System.Int32,System.Predicate{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeList`1.Sort(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeList`1.Sort(System.Comparison{`0},System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeList`1.Sort(System.Collections.Generic.IComparer{`0},System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeList`1.Sort(System.Int32,System.Int32,System.Collections.Generic.IComparer{`0},System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeList`1.Reverse(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeList`1.Reverse(System.Int32,System.Int32,System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeList`1.BeforeChanged">
+            <inheritdoc/>
+        </member>
+        <member name="T:Watchables.IWatchableDictionary`2">
+            <summary>
+            Common interface for <see cref="T:Watchables.WatchableCollection"/> implementations which wrap a <see cref="T:System.Collections.Generic.Dictionary`2"/>.
+            Provides mirrors of the Key and Value querying methods in <see cref="T:System.Collections.Generic.Dictionary`2"/>.
+            </summary>
+        </member>
+        <member name="P:Watchables.IWatchableDictionary`2.Item(`0)">
+            <summary> Attempts to retrieve the item with the provided <paramref name="key"/>. </summary>
+        </member>
+        <member name="P:Watchables.IWatchableDictionary`2.Keys">
+            <summary> A read-only collection of the keys contained in the <see cref="T:System.Collections.Generic.Dictionary`2"/>. </summary>
+        </member>
+        <member name="P:Watchables.IWatchableDictionary`2.Values">
+            <summary> A read-only collection of the values contained in the <see cref="T:System.Collections.Generic.Dictionary`2"/>. </summary>
+        </member>
+        <member name="M:Watchables.IWatchableDictionary`2.ContainsKey(`0)">
+            <inheritdoc cref="M:System.Collections.Generic.Dictionary`2.ContainsKey(`0)"/>
+        </member>
+        <member name="M:Watchables.IWatchableDictionary`2.ContainsValue(`1)">
+            <inheritdoc cref="M:System.Collections.Generic.Dictionary`2.ContainsValue(`1)"/>
+        </member>
+        <member name="M:Watchables.IWatchableDictionary`2.TryGetValue(`0,`1@)">
+            <inheritdoc cref="M:System.Collections.Generic.Dictionary`2.TryGetValue(`0,`1@)"/>
+        </member>
+        <member name="T:Watchables.IWatchableHashSet`1">
+            <summary>
+            Common interface for <see cref="T:Watchables.WatchableCollection"/> implementations which wrap a <see cref="T:System.Collections.Generic.HashSet`1"/>.
+            Provides mirrors of many of the querying methods in <see cref="T:System.Collections.Generic.HashSet`1"/>
+            </summary>
+        </member>
+        <member name="M:Watchables.IWatchableHashSet`1.IsProperSubsetOf(System.Collections.Generic.IEnumerable{`0})">
+            <inheritdoc cref="M:System.Collections.Generic.HashSet`1.IsProperSubsetOf(System.Collections.Generic.IEnumerable{`0})"/>
+        </member>
+        <member name="M:Watchables.IWatchableHashSet`1.IsProperSupersetOf(System.Collections.Generic.IEnumerable{`0})">
+            <inheritdoc cref="M:System.Collections.Generic.HashSet`1.IsProperSupersetOf(System.Collections.Generic.IEnumerable{`0})"/>
+        </member>
+        <member name="M:Watchables.IWatchableHashSet`1.IsSubsetOf(System.Collections.Generic.IEnumerable{`0})">
+            <inheritdoc cref="M:System.Collections.Generic.HashSet`1.IsSubsetOf(System.Collections.Generic.IEnumerable{`0})"/>
+        </member>
+        <member name="M:Watchables.IWatchableHashSet`1.IsSupersetOf(System.Collections.Generic.IEnumerable{`0})">
+            <inheritdoc cref="M:System.Collections.Generic.HashSet`1.IsSupersetOf(System.Collections.Generic.IEnumerable{`0})"/>
+        </member>
+        <member name="M:Watchables.IWatchableHashSet`1.Overlaps(System.Collections.Generic.IEnumerable{`0})">
+            <inheritdoc cref="M:System.Collections.Generic.HashSet`1.Overlaps(System.Collections.Generic.IEnumerable{`0})"/>
+        </member>
+        <member name="M:Watchables.IWatchableHashSet`1.SetEquals(System.Collections.Generic.IEnumerable{`0})">
+            <inheritdoc cref="M:System.Collections.Generic.HashSet`1.SetEquals(System.Collections.Generic.IEnumerable{`0})"/>
+        </member>
+        <member name="T:Watchables.IWatchableList`1">
+            <summary>
+            Common interface for <see cref="T:Watchables.WatchableCollection"/> implementations which wrap a <see cref="T:System.Collections.Generic.List`1"/>.
+            Provides mirrors for many of the querying methods in <see cref="T:System.Collections.Generic.List`1"/>
+            </summary>
+        </member>
+        <member name="P:Watchables.IWatchableList`1.Item(System.Int32)">
+            <summary> Attempts to retrieve the item at the provided <paramref name="index"/>. </summary>
+        </member>
+        <member name="P:Watchables.IWatchableList`1.IsAutoSorting">
+            <summary> Whether the list is being automatically sorted when a change occurs. </summary>
+        </member>
+        <member name="M:Watchables.IWatchableList`1.AutoSort(System.Comparison{`0},System.Object)">
+            <summary> Attempts to set the <see cref="T:System.Comparison`1"/> used to automatically sort the list. </summary>
+            <param name="comparison"> The comparison to sort the list with. </param>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.IWatchableList`1.ClearAutoSort(System.Object)">
+            <summary> Attempts to clear any currently used auto sorting by a <see cref="T:System.Comparison`1"/>. </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.IWatchableList`1.IndexOf(`0)">
+            <inheritdoc cref="M:System.Collections.Generic.List`1.IndexOf(`0)"/>
+        </member>
+        <member name="M:Watchables.IWatchableList`1.IndexOf(`0,System.Int32)">
+            <inheritdoc cref="M:System.Collections.Generic.List`1.IndexOf(`0,System.Int32)"/>
+        </member>
+        <member name="M:Watchables.IWatchableList`1.IndexOf(`0,System.Int32,System.Int32)">
+            <inheritdoc cref="M:System.Collections.Generic.List`1.IndexOf(`0,System.Int32,System.Int32)"/>
+        </member>
+        <member name="M:Watchables.IWatchableList`1.LastIndexOf(`0)">
+            <inheritdoc cref="M:System.Collections.Generic.List`1.LastIndexOf(`0)"/>
+        </member>
+        <member name="M:Watchables.IWatchableList`1.LastIndexOf(`0,System.Int32)">
+            <inheritdoc cref="M:System.Collections.Generic.List`1.LastIndexOf(`0,System.Int32)"/>
+        </member>
+        <member name="M:Watchables.IWatchableList`1.LastIndexOf(`0,System.Int32,System.Int32)">
+            <inheritdoc cref="M:System.Collections.Generic.List`1.LastIndexOf(`0,System.Int32,System.Int32)"/>
+        </member>
+        <member name="M:Watchables.IWatchableList`1.Exists(System.Predicate{`0})">
+            <inheritdoc cref="M:System.Collections.Generic.List`1.Exists(System.Predicate{`0})"/>
+        </member>
+        <member name="M:Watchables.IWatchableList`1.TrueForAll(System.Predicate{`0})">
+            <inheritdoc cref="M:System.Collections.Generic.List`1.TrueForAll(System.Predicate{`0})"/>
+        </member>
+        <member name="M:Watchables.IWatchableList`1.Find(System.Predicate{`0})">
+            <inheritdoc cref="M:System.Collections.Generic.List`1.Find(System.Predicate{`0})"/>
+        </member>
+        <member name="M:Watchables.IWatchableList`1.FindLast(System.Predicate{`0})">
+            <inheritdoc cref="M:System.Collections.Generic.List`1.FindLast(System.Predicate{`0})"/>
+        </member>
+        <member name="M:Watchables.IWatchableList`1.FindAll(System.Predicate{`0})">
+            <inheritdoc cref="M:System.Collections.Generic.List`1.FindAll(System.Predicate{`0})"/>
+        </member>
+        <member name="M:Watchables.IWatchableList`1.FindIndex(System.Predicate{`0})">
+            <inheritdoc cref="M:System.Collections.Generic.List`1.FindIndex(System.Predicate{`0})"/>
+        </member>
+        <member name="M:Watchables.IWatchableList`1.FindIndex(System.Int32,System.Predicate{`0})">
+            <inheritdoc cref="M:System.Collections.Generic.List`1.FindIndex(System.Int32,System.Predicate{`0})"/>
+        </member>
+        <member name="M:Watchables.IWatchableList`1.FindIndex(System.Int32,System.Int32,System.Predicate{`0})">
+            <inheritdoc cref="M:System.Collections.Generic.List`1.FindIndex(System.Int32,System.Int32,System.Predicate{`0})"/>
+        </member>
+        <member name="M:Watchables.IWatchableList`1.FindLastIndex(System.Predicate{`0})">
+            <inheritdoc cref="M:System.Collections.Generic.List`1.FindLastIndex(System.Predicate{`0})"/>
+        </member>
+        <member name="M:Watchables.IWatchableList`1.FindLastIndex(System.Int32,System.Predicate{`0})">
+            <inheritdoc cref="M:System.Collections.Generic.List`1.FindLastIndex(System.Int32,System.Predicate{`0})"/>
+        </member>
+        <member name="M:Watchables.IWatchableList`1.FindLastIndex(System.Int32,System.Int32,System.Predicate{`0})">
+            <inheritdoc cref="M:System.Collections.Generic.List`1.FindLastIndex(System.Int32,System.Int32,System.Predicate{`0})"/>
+        </member>
+        <member name="M:Watchables.IWatchableList`1.Sort(System.Object)">
+            <summary> 
+            Attemtps to sort the list using the default sorter. Will fail if <see cref="P:Watchables.IWatchableList`1.IsAutoSorting"/> is true.
+            </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.IWatchableList`1.Sort(System.Comparison{`0},System.Object)">
+            <summary> 
+            Attemtps to sort the list using the provided <see cref="T:System.Comparison`1"/>. Will fail if <see cref="P:Watchables.IWatchableList`1.IsAutoSorting"/> is true.
+            </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.IWatchableList`1.Sort(System.Collections.Generic.IComparer{`0},System.Object)">
+            <summary> 
+            Attemtps to sort the list using the provided <see cref="T:System.Collections.Generic.IComparer`1"/>. Will fail if <see cref="P:Watchables.IWatchableList`1.IsAutoSorting"/> is true.
+            </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.IWatchableList`1.Sort(System.Int32,System.Int32,System.Collections.Generic.IComparer{`0},System.Object)">
+            <summary> 
+            Attemtps to sort the list within the given range using the provided <see cref="T:System.Collections.Generic.IComparer`1"/>.
+            Will fail if <see cref="P:Watchables.IWatchableList`1.IsAutoSorting"/> is true.
+            </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.IWatchableList`1.Reverse(System.Object)">
+            <summary> 
+            Attemtps to reverse order of the list. Will fail if <see cref="P:Watchables.IWatchableList`1.IsAutoSorting"/> is true.
+            </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.IWatchableList`1.Reverse(System.Int32,System.Int32,System.Object)">
+            <summary> 
+            Attemtps to reverse order of the list within a given range. Will fail if <see cref="P:Watchables.IWatchableList`1.IsAutoSorting"/> is true.
+            </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="T:Watchables.WatchableCollection">
+            <summary>
+            Base class for Watchable collections. 
+            Derived from <see cref="T:Watchables.WatchableBase"/>, implements <see cref="T:Watchables.ISealable"/> and <see cref="T:System.Collections.IEnumerable"/>.
+            </summary>
+        </member>
+        <member name="P:Watchables.WatchableCollection.Count">
+            <summary> The number of items in this collection. </summary>
+        </member>
+        <member name="P:Watchables.WatchableCollection.IsSealed">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableCollection.SetSealed(System.Boolean,System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableCollection.MutationGuard(System.Action,System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableCollection.GetNonGenericEnumerator">
+            <summary> This method provides the <see cref="T:System.Collections.IEnumerator"/> to satisfy <see cref="M:System.Collections.IEnumerable.GetEnumerator"/> </summary>
+        </member>
+        <member name="M:Watchables.WatchableCollection.System#Collections#IEnumerable#GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="T:Watchables.WatchableCollection`1">
+            <summary>
+            Generic base class extension of <see cref="T:Watchables.WatchableCollection"/> for directly mutable implementations. Implements <see cref="T:System.Collections.Generic.IEnumerable`1"/>
+            </summary>
+        </member>
+        <member name="P:Watchables.WatchableCollection`1.Collection">
+            <summary> The <see cref="T:System.Collections.Generic.ICollection`1"/> instance this wraps and operates on. </summary>
+        </member>
+        <member name="P:Watchables.WatchableCollection`1.Count">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableCollection`1.Contains(`0)">
+            <summary> Determines whether the collection contains the provided value. </summary>
+        </member>
+        <member name="M:Watchables.WatchableCollection`1.Add(`0,System.Object)">
+            <summary> Attempts to add the provided value to the collection. </summary>
+            <param name="owner"> The current owner of the collection, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.WatchableCollection`1.AddRange(System.Collections.Generic.IEnumerable{`0},System.Object)">
+            <summary> Attempts to add the provided range of values to the collection. </summary>
+            <param name="owner"> The current owner of the collection, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.WatchableCollection`1.Remove(`0,System.Object)">
+            <summary> Attempts to remove the provided value from the collection. </summary>
+            <param name="owner"> The current owner of the collection, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.WatchableCollection`1.RemoveRange(System.Collections.Generic.IEnumerable{`0},System.Object)">
+            <summary> Attempts to remove the provided range of values from the collection. </summary>
+            <param name="owner"> The current owner of the collection, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.WatchableCollection`1.Clear(System.Object)">
+            <summary> Attempts to clear collection of all values. </summary>
+            <param name="owner"> The current owner of the collection, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.WatchableCollection`1.GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableCollection`1.ClearValue">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableCollection`1.GetNonGenericEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="T:Watchables.WatchableDictionary`2">
+            <summary>
+            An implementation of <see cref="T:Watchables.WatchableCollection`1"/> which represents a <see cref="T:System.Collections.Generic.Dictionary`2"/>.
+            Provides mirrors of many of the querying and mutation methods in <see cref="T:System.Collections.Generic.Dictionary`2"/>.
+            </summary>
+        </member>
+        <member name="P:Watchables.WatchableDictionary`2.Collection">
+            <inheritdoc/>
+        </member>
+        <member name="P:Watchables.WatchableDictionary`2.Item(`0)">
+            <inheritdoc/>
+        </member>
+        <member name="P:Watchables.WatchableDictionary`2.Item(`0,System.Object)">
+            <summary> Attempts to retrieve or set the item at the given <paramref name="key"/>. </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+        </member>
+        <member name="P:Watchables.WatchableDictionary`2.Keys">
+            <inheritdoc/>
+        </member>
+        <member name="P:Watchables.WatchableDictionary`2.Values">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableDictionary`2.ContainsKey(`0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableDictionary`2.ContainsValue(`1)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableDictionary`2.TryGetValue(`0,`1@)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableDictionary`2.Add(`0,`1,System.Object)">
+            <summary>
+            Attempts to add the provided <paramref name="value"/> to the <see cref="T:System.Collections.Generic.Dictionary`2"/> with 
+            the provided <paramref name="key"/>. Will throw if the <paramref name="key"/> already exists in the <see cref="T:System.Collections.Generic.Dictionary`2"/>.
+            </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.WatchableDictionary`2.Remove(`0,System.Object)">
+            <summary>
+            Attempts to remove the item with the provided <paramref name="key"/> from the <see cref="T:System.Collections.Generic.Dictionary`2"/>.
+            </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. (Not if there was a value to remove, only if the attempt to remove was allowed) </returns>
+        </member>
+        <member name="M:Watchables.WatchableDictionary`2.TryAdd(`0,`1,System.Object)">
+            <summary>
+            Attempts to add the provided <paramref name="value"/> to the <see cref="T:System.Collections.Generic.Dictionary`2"/> with 
+            the provided <paramref name="key"/>.
+            </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the <paramref name="key"/> did not already exist and the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.WatchableDictionary`2.Set(`0,`1,System.Object)">
+            <summary>
+            Attempts to set the <paramref name="value"/> in the <see cref="T:System.Collections.Generic.Dictionary`2"/> at 
+            the provided <paramref name="key"/>.
+            </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the the operation was allowed. </returns>
+        </member>
+        <member name="T:Watchables.WatchableHashSet`1">
+            <summary>
+            An implementation of <see cref="T:Watchables.WatchableCollection`1"/> which represents a <see cref="T:System.Collections.Generic.HashSet`1"/>.
+            Provides mirros of many of the querying and mutation methods in <see cref="T:System.Collections.Generic.HashSet`1"/>.
+            </summary>
+        </member>
+        <member name="P:Watchables.WatchableHashSet`1.Collection">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableHashSet`1.IsProperSubsetOf(System.Collections.Generic.IEnumerable{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableHashSet`1.IsProperSupersetOf(System.Collections.Generic.IEnumerable{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableHashSet`1.IsSubsetOf(System.Collections.Generic.IEnumerable{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableHashSet`1.IsSupersetOf(System.Collections.Generic.IEnumerable{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableHashSet`1.Overlaps(System.Collections.Generic.IEnumerable{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableHashSet`1.SetEquals(System.Collections.Generic.IEnumerable{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableHashSet`1.ExceptWith(System.Collections.Generic.IEnumerable{`0},System.Object)">
+            <summary> 
+            Attempts to remove all items from the <see cref="T:System.Collections.Generic.HashSet`1"/> which appear in the <paramref name="other"/> collection. 
+            </summary>
+            <returns> Whether the operation was allowed. </returns>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+        </member>
+        <member name="M:Watchables.WatchableHashSet`1.IntersectWith(System.Collections.Generic.IEnumerable{`0},System.Object)">
+            <summary>
+            Attempts to remove all items from the <see cref="T:System.Collections.Generic.HashSet`1"/> which do not also appear in the <paramref name="other"/> collection.
+            </summary>
+            <returns> Whether the operation was allowed. </returns>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+        </member>
+        <member name="M:Watchables.WatchableHashSet`1.SymmetricExceptWith(System.Collections.Generic.IEnumerable{`0},System.Object)">
+            <summary>
+            Attempts to set the contents of the <see cref="T:System.Collections.Generic.HashSet`1"/> to contain only elements which currently appear in the
+            <see cref="T:System.Collections.Generic.HashSet`1"/> or in the <paramref name="other"/> collection, but which do not appear in both.
+            </summary>
+            <returns> Whether the operation was allowed. </returns>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+        </member>
+        <member name="M:Watchables.WatchableHashSet`1.UnionWith(System.Collections.Generic.IEnumerable{`0},System.Object)">
+            <summary>
+            Attempts to set the contents of the <see cref="T:System.Collections.Generic.HashSet`1"/> to contain elements which currently appear in the <see cref="T:System.Collections.Generic.HashSet`1"/>,
+            the <paramref name="other"/> collection, or both.
+            </summary>
+            <returns> Whether the operation was allowed. </returns>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+        </member>
+        <member name="M:Watchables.WatchableHashSet`1.RemoveWhere(System.Predicate{`0},System.Object)">
+            <summary> 
+            Attempts to remove all elements from the <see cref="T:System.Collections.Generic.HashSet`1"/> which <paramref name="match"/> the given <see cref="T:System.Predicate`1"/>.
+            </summary>
+            <returns> Whether the operation was allowed. </returns>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+        </member>
+        <member name="T:Watchables.WatchableList`1">
+            <summary>
+            An implementation of <see cref="T:Watchables.WatchableCollection`1"/> which represents a <see cref="T:System.Collections.Generic.List`1"/>.
+            Provides mirrors of many of the querying and mutation methods in <see cref="T:System.Collections.Generic.List`1"/>.
+            </summary>
+        </member>
+        <member name="P:Watchables.WatchableList`1.Collection">
+            <inheritdoc/>
+        </member>
+        <member name="P:Watchables.WatchableList`1.IsAutoSorting">
+            <inheritdoc/>
+        </member>
+        <member name="P:Watchables.WatchableList`1.Item(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="P:Watchables.WatchableList`1.Item(System.Int32,System.Object)">
+            <summary> Attempts to retrieve or set the item at the given index. </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state when setting. </param>
+        </member>
+        <member name="M:Watchables.WatchableList`1.AutoSort(System.Comparison{`0},System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableList`1.ClearAutoSort(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableList`1.IndexOf(`0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableList`1.IndexOf(`0,System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableList`1.IndexOf(`0,System.Int32,System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableList`1.LastIndexOf(`0)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableList`1.LastIndexOf(`0,System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableList`1.LastIndexOf(`0,System.Int32,System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableList`1.Exists(System.Predicate{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableList`1.TrueForAll(System.Predicate{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableList`1.Find(System.Predicate{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableList`1.FindLast(System.Predicate{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableList`1.FindAll(System.Predicate{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableList`1.FindIndex(System.Predicate{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableList`1.FindIndex(System.Int32,System.Predicate{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableList`1.FindIndex(System.Int32,System.Int32,System.Predicate{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableList`1.FindLastIndex(System.Predicate{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableList`1.FindLastIndex(System.Int32,System.Predicate{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableList`1.FindLastIndex(System.Int32,System.Int32,System.Predicate{`0})">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableList`1.Set(System.Int32,`0,System.Object)">
+            <summary> Attempts to set the <paramref name="item"/> at the provided <paramref name="index"/>. </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.WatchableList`1.Insert(System.Int32,`0,System.Object)">
+            <summary> Attempts to insert an <paramref name="item"/> at the provided <paramref name="index"/>. </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.WatchableList`1.InsertRange(System.Int32,System.Collections.Generic.IEnumerable{`0},System.Object)">
+            <summary> Attempts to insert a range of <paramref name="items"/> at the provided <paramref name="index"/>. </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.WatchableList`1.RemoveAt(System.Int32,System.Object)">
+            <summary> Attempts to remove the item at the provided <paramref name="index"/>. </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.WatchableList`1.RemoveRange(System.Int32,System.Int32,System.Object)">
+            <summary> Attempts to remove a range of items starting at the provided <paramref name="index"/>. </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.WatchableList`1.Sort(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableList`1.Sort(System.Comparison{`0},System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableList`1.Sort(System.Collections.Generic.IComparer{`0},System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableList`1.Sort(System.Int32,System.Int32,System.Collections.Generic.IComparer{`0},System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableList`1.Reverse(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableList`1.Reverse(System.Int32,System.Int32,System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.WatchableList`1.BeforeChanged">
+            <inheritdoc/>
+        </member>
+        <member name="T:Watchables.CompositeBase`1">
+            <summary>
+            The base class for the <see cref="T:Watchables.IWatchable"/> half of the Composite-Part pair pattern of Watchables.
+            Provides common interface and implementation for adding and removing <typeparamref name="TPart"/> instances.
+            </summary>
+            <typeparam name="TPart"> The type of part used to compose. </typeparam>
+        </member>
+        <member name="F:Watchables.CompositeBase`1._parts">
+            <summary> All of the current <typeparamref name="TPart"/>s composing this instance. </summary>
+        </member>
+        <member name="M:Watchables.CompositeBase`1.AddPart(`0)">
+            <summary> Add a new <typeparamref name="TPart"/> to the <see cref="T:Watchables.CompositeBase`1"/>. </summary>
+        </member>
+        <member name="M:Watchables.CompositeBase`1.AddParts(System.Collections.Generic.IEnumerable{`0})">
+            <summary> Add a range of new <typeparamref name="TPart"/>s to the <see cref="T:Watchables.CompositeBase`1"/>. </summary>
+        </member>
+        <member name="M:Watchables.CompositeBase`1.RemovePart(`0)">
+            <summary> Remove the <typeparamref name="TPart"/> from the <see cref="T:Watchables.CompositeBase`1"/>. </summary>
+        </member>
+        <member name="M:Watchables.CompositeBase`1.RemoveParts(System.Collections.Generic.IEnumerable{`0})">
+            <summary> Remove a range of <typeparamref name="TPart"/>s from the <see cref="T:Watchables.CompositeBase`1"/>. </summary>
+        </member>
+        <member name="M:Watchables.CompositeBase`1.BeforeDestroyed">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeBase`1.Sort">
+            <summary>
+            This method defines the sorting behavior of <see cref="F:Watchables.CompositeBase`1._parts"/> when <typeparamref name="TPart"/>s are
+            added or removed.
+            </summary>
+        </member>
+        <member name="M:Watchables.CompositeBase`1.OnPartAdded(`0)">
+            <summary>
+            Override this method to define the behavior when a new <paramref name="part"/> is added.
+            </summary>
+        </member>
+        <member name="M:Watchables.CompositeBase`1.OnPartRemoved(`0)">
+            <summary>
+            Override this method to define the behavior when a <paramref name="part"/> is removed.
+            </summary>
+        </member>
+        <member name="T:Watchables.CompositeBase`2">
+            <summary>
+            Extension base class of <see cref="T:Watchables.CompositeBase`1"/> which implements <see cref="T:Watchables.IWatchable`1"/>, adding value definition.
+            </summary>
+            <typeparam name="TValue"> The contained value type. </typeparam>
+            <typeparam name="TPart"> The type of part used to compose. </typeparam>
+        </member>
+        <member name="P:Watchables.CompositeBase`2.ReadOnlyWrapper">
+            <summary> A read-only version of this instance. </summary>
+        </member>
+        <member name="P:Watchables.CompositeBase`2.Value">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeBase`2.ToString">
+            <summary> Returns a string representation of the underlying value. </summary>
+        </member>
+        <member name="M:Watchables.CompositeBase`2.OnPartAdded(`1)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeBase`2.OnPartRemoved(`1)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeBase`2.BeforeChanged">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeBase`2.ClearValue">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeBase`2.Evaluate">
+            <summary> 
+            This method defines the behavior around setting the instance's value when an internal change occurs. 
+            Never call <see cref="M:Watchables.WatchableBase.InvokeChanged"/> from within this method as it will cause recursion. 
+            </summary>
+        </member>
+        <member name="T:Watchables.CompositeLibrary`3">
+            <summary>
+            A wrapped <see cref="T:System.Collections.Generic.Dictionary`2"/> with keys of type <typeparamref name="TKey"/> and values of type
+            <typeparamref name="TComp"/>, where <typeparamref name="TComp"/> is derived from <see cref="T:Watchables.CompositeBase`1"/>.
+            <br/> Provides access to, and lazy instantiation of, <typeparamref name="TComp"/> instances. Instances may not be manually added or removed
+            except with <see cref="M:Watchables.CompositeLibrary`3.Clear(System.Object)"/>.
+            </summary>
+            <typeparam name="TKey"> The type of key used. </typeparam>
+            <typeparam name="TComp"> The contained composite type. </typeparam>
+            <typeparam name="TPart"> The parts the composite type is composed of. </typeparam>
+        </member>
+        <member name="F:Watchables.CompositeLibrary`3._collection">
+            <summary> The wrapped collection of <typeparamref name="TComp"/> instances. </summary>
+        </member>
+        <member name="P:Watchables.CompositeLibrary`3.Item(`0)">
+            <inheritdoc cref="M:Watchables.CompositeLibrary`3.Get(`0)"/>
+        </member>
+        <member name="M:Watchables.CompositeLibrary`3.Get(`0)">
+            <summary>
+            Retrieves the <typeparamref name="TComp"/> instance with the given <paramref name="key"/>. Will create a new one if one does not exist.
+            </summary>
+        </member>
+        <member name="M:Watchables.CompositeLibrary`3.AddPart(`0,`2)">
+            <summary> Add the provided <paramref name="part"/> to the <typeparamref name="TComp"/> with the given <paramref name="key"/>. </summary>
+        </member>
+        <member name="M:Watchables.CompositeLibrary`3.AddParts(`0,System.Collections.Generic.IEnumerable{`2})">
+            <summary> Add the provided <paramref name="parts"/> to the <typeparamref name="TComp"/> with the given <paramref name="key"/>. </summary>
+        </member>
+        <member name="M:Watchables.CompositeLibrary`3.RemovePart(`0,`2)">
+            <summary> Remove the provided <paramref name="part"/> from the <typeparamref name="TComp"/> with the given <paramref name="key"/>. </summary>
+        </member>
+        <member name="M:Watchables.CompositeLibrary`3.RemoveParts(`0,System.Collections.Generic.IEnumerable{`2})">
+            <summary> Remove the provided <paramref name="parts"/> from the <typeparamref name="TComp"/> with the given <paramref name="key"/>. </summary>
+        </member>
+        <member name="M:Watchables.CompositeLibrary`3.Clear(System.Object)">
+            <summary>
+            Attempts to destroy all contained <typeparamref name="TComp"/> instances and clear the collection.
+            </summary>
+            <param name="owner"> The instance's current owner </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="T:Watchables.CompositePartBase`1">
+            <summary>
+            The base class for the Part half of the Composite-Part pair pattern of Watchables. Provides common interface and implementation for
+            sorting priority and removal.
+            </summary>
+            <typeparam name="TSelf"> The self-referential type </typeparam>
+        </member>
+        <member name="E:Watchables.CompositePartBase`1.Removed">
+            <summary> The event raised when the part requests to be removed. </summary>
+        </member>
+        <member name="P:Watchables.CompositePartBase`1.Priority">
+            <summary> The sorting priority of the part. </summary>
+        </member>
+        <member name="M:Watchables.CompositePartBase`1.Remove(System.Object)">
+            <summary>
+            Attempts to raise the <see cref="E:Watchables.CompositePartBase`1.Removed"/> event, instructing any containing composites to remove this part.
+            </summary>
+            <param name="owner"> The current owner of the instance, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="T:Watchables.CompositePartBase`2">
+            <summary>
+            Extension base class of <see cref="T:Watchables.CompositePartBase`1"/>, adding value definition by implementing <see cref="T:Watchables.IWrapper`1"/>.
+            </summary>
+            <typeparam name="TValue"> The contained value type. </typeparam>
+            <typeparam name="TSelf"> The self-referential type. </typeparam>
+        </member>
+        <member name="P:Watchables.CompositePartBase`2.ValueSource">
+            <summary> The source of the part's <typeparamref name="TValue"/> value. </summary>
+        </member>
+        <member name="P:Watchables.CompositePartBase`2.Value">
+            <inheritdoc/>
+        </member>
+        <member name="P:Watchables.CompositePartBase`2.IsValid">
+            <summary> Whether the part's <see cref="P:Watchables.CompositePartBase`2.ValueSource"/> is still present. </summary>
+        </member>
+        <member name="M:Watchables.CompositePartBase`2.SetOwner(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositePartBase`2.ClearOwner(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Watchables.CompositePartPriority">
+            <summary>
+            <see cref="T:System.Enum"/> used for defining priority for sorting <see cref="T:Watchables.CompositePartBase`2"/> instances in 
+            <see cref="T:Watchables.CompositeBase`2"/> implementations.
+            </summary>
+        </member>
+        <member name="T:Watchables.FlagsCompositePart`1">
+            <summary>
+            Implementation of <see cref="T:Watchables.CompositePartBase`2"/> for <see cref="T:System.FlagsAttribute"/> marked <see cref="T:System.Enum"/>s. 
+            </summary>
+        </member>
+        <member name="P:Watchables.FlagsCompositePart`1.SetTo">
+            <summary> The value to set the targeted bits to. </summary>
+        </member>
+        <member name="M:Watchables.FlagsCompositePart`1.#ctor(Watchables.IWrapper{`0},System.Boolean,Watchables.CompositePartPriority)">
+            <param name="setTo"> Whether to set the targeted bits on (<see langword="true"/>) or off (<see langword="false"/>)</param>
+        </member>
+        <member name="T:Watchables.FlagsComposite`1">
+            <summary>
+            Implementation of <see cref="T:Watchables.CompositeBase`2"/> for <see cref="T:System.FlagsAttribute"/> marked <see cref="T:System.Enum"/>s. 
+            Parts which set to Off will override Parts which set to On and have the same <see cref="T:Watchables.CompositePartPriority"/> and target the same bits.
+            </summary>
+        </member>
+        <member name="M:Watchables.FlagsComposite`1.Evaluate">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.FlagsComposite`1.Sort">
+            <inheritdoc/>
+        </member>
+        <member name="T:Watchables.FlagsRequestable`1">
+            <summary>
+            Allows for objects to request bits of the <see cref="T:System.FlagsAttribute"/> marked <see cref="T:System.Enum"/> type <typeparamref name="T"/>
+            be set. The value of this instance will be the combination of all currently requested values.
+            </summary>
+        </member>
+        <member name="M:Watchables.FlagsRequestable`1.AddRequest(System.Object,`0)">
+            <summary> 
+            Add the <paramref name="value"/>'s bits to a request associated with the <paramref name="requester"/>, or creates a new one. 
+            </summary>
+        </member>
+        <member name="M:Watchables.FlagsRequestable`1.RemoveRequest(System.Object,`0)">
+            <summary> Remove the <paramref name="value"/>'s bits from the request associated with the <paramref name="requester"/>. </summary>
+        </member>
+        <member name="M:Watchables.FlagsRequestable`1.BeforeDestroyed">
+            <inheritdoc/>
+        </member>
+        <member name="T:Watchables.TagsCompositePart`1">
+            <summary>
+            Implementation of <see cref="T:Watchables.CompositePartBase`2"/> for <see cref="T:Watchables.Tag`1"/> types.
+            </summary>
+        </member>
+        <member name="P:Watchables.TagsCompositePart`1.Add">
+            <summary> Whether to add or remove the targeted <typeparamref name="T"/> values from the composite. </summary>
+        </member>
+        <member name="M:Watchables.TagsCompositePart`1.#ctor(Watchables.IWrapper{Watchables.Tags{`0}},System.Boolean,Watchables.CompositePartPriority)">
+            <param name="add"> 
+            Whether to add (<see langword="true"/>) or remove (<see langword="false"/>) the targeted <typeparamref name="T"/>
+            values from the composite.
+            </param>
+        </member>
+        <member name="T:Watchables.TagsComposite`1">
+            <summary>
+            Implementation of <see cref="T:Watchables.CompositeBase`2"/> for <see cref="T:Watchables.Tag`1"/> types. Parts which Remove
+            values will override any Parts with the same <see cref="T:Watchables.CompositePartPriority"/> which would Add the same values.
+            </summary>
+        </member>
+        <member name="M:Watchables.TagsComposite`1.Evaluate">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.TagsComposite`1.Sort">
+            <inheritdoc/>
+        </member>
+        <member name="T:Watchables.TagsRequestable`1">
+            <summary>
+            Allows for objects to request <typeparamref name="T"/> values be added to a <see cref="T:Watchables.Tags`1"/> value. As long as
+            any requests exist for a given <typeparamref name="T"/> value, it will be present in the value of this instance.
+            </summary>
+        </member>
+        <member name="M:Watchables.TagsRequestable`1.AddRequest(System.Object,`0)">
+            <summary>
+            Add the <paramref name="value"/> to a request associated with the <paramref name="requester"/>, or creates a new one.
+            </summary>
+        </member>
+        <member name="M:Watchables.TagsRequestable`1.AddRequest(System.Object,Watchables.Tags{`0})">
+            <inheritdoc cref="M:Watchables.TagsRequestable`1.AddRequest(System.Object,`0)"/>
+        </member>
+        <member name="M:Watchables.TagsRequestable`1.RemoveRequest(System.Object,`0)">
+            <summary>
+            Remove the <paramref name="value"/> from the request associated with the <paramref name="requester"/>.
+            </summary>
+        </member>
+        <member name="M:Watchables.TagsRequestable`1.RemoveRequest(System.Object,Watchables.Tags{`0})">
+            <inheritdoc cref="M:Watchables.TagsRequestable`1.RemoveRequest(System.Object,`0)"/>
+        </member>
+        <member name="M:Watchables.TagsRequestable`1.BeforeDestroyed">
+            <inheritdoc/>
+        </member>
+        <member name="P:Watchables.Tags`1.IsNone">
+            <summary> Whether this instance does not represent any <typeparamref name="T"/> values. </summary>
+        </member>
+        <member name="M:Watchables.Tags`1.op_Addition(Watchables.Tags{`0},`0)">
+            <inheritdoc cref="M:Watchables.Tags`1.With(`0)"/>
+        </member>
+        <member name="M:Watchables.Tags`1.op_Addition(Watchables.Tags{`0},Watchables.Tags{`0})">
+            <inheritdoc cref="M:Watchables.Tags`1.With(Watchables.Tags{`0})"/>
+        </member>
+        <member name="M:Watchables.Tags`1.op_Subtraction(Watchables.Tags{`0},`0)">
+            <inheritdoc cref="M:Watchables.Tags`1.Without(`0)"/>
+        </member>
+        <member name="M:Watchables.Tags`1.op_Subtraction(Watchables.Tags{`0},Watchables.Tags{`0})">
+            <inheritdoc cref="M:Watchables.Tags`1.Without(Watchables.Tags{`0})"/>
+        </member>
+        <member name="M:Watchables.Tags`1.op_ExclusiveOr(Watchables.Tags{`0},`0)">
+            <inheritdoc cref="M:Watchables.Tags`1.Flip(`0)"/>
+        </member>
+        <member name="M:Watchables.Tags`1.op_ExclusiveOr(Watchables.Tags{`0},Watchables.Tags{`0})">
+            <inheritdoc cref="M:Watchables.Tags`1.Flip(Watchables.Tags{`0})"/>
+        </member>
+        <member name="M:Watchables.Tags`1.op_OnesComplement(Watchables.Tags{`0})">
+            <inheritdoc cref="M:Watchables.Tags`1.Invert"/>
+        </member>
+        <member name="M:Watchables.Tags`1.op_Equality(Watchables.Tags{`0},`0)">
+            <summary> Determines if the current {</summary>
+        </member>
+        <member name="M:Watchables.Tags`1.With(`0)">
+            <summary> Returns a version of the current <see cref="T:Watchables.Tags`1"/> which also contains the given <paramref name="tag"/>. </summary>
+        </member>
+        <member name="M:Watchables.Tags`1.With(Watchables.Tags{`0})">
+            <summary> 
+            Returns a version of the current <see cref="T:Watchables.Tags`1"/> which also contains the values in the <paramref name="other"/> <see cref="T:Watchables.Tags`1"/>. 
+            </summary>
+        </member>
+        <member name="M:Watchables.Tags`1.Without(`0)">
+            <summary> Returns a version of the current <see cref="T:Watchables.Tags`1"/> which does not contain the given <paramref name="tag"/>. </summary>
+        </member>
+        <member name="M:Watchables.Tags`1.Without(Watchables.Tags{`0})">
+            <summary> 
+            Returns a version of the current <see cref="T:Watchables.Tags`1"/> which does not contain the values in the <paramref name="other"/> <see cref="T:Watchables.Tags`1"/>. 
+            </summary>
+        </member>
+        <member name="M:Watchables.Tags`1.Flip(`0)">
+            <summary> Returns a version of the current <see cref="T:Watchables.Tags`1"/> which inverts whether it contains given <paramref name="tag"/>. </summary>
+        </member>
+        <member name="M:Watchables.Tags`1.Flip(Watchables.Tags{`0})">
+            <summary> 
+            Returns a version of the current <see cref="T:Watchables.Tags`1"/> which inverts whether it contains the values in the <paramref name="other"/> <see cref="T:Watchables.Tags`1"/>. 
+            </summary>
+        </member>
+        <member name="M:Watchables.Tags`1.Invert">
+            <summary> Returns a version of the current <see cref="T:Watchables.Tags`1"/> which reverses which <typeparamref name="T"/> values it does and doesn't contain. </summary>
+        </member>
+        <member name="M:Watchables.Tags`1.Has(`0)">
+            <summary> Determines if the current <see cref="T:Watchables.Tags`1"/> contains the given <paramref name="tag"/>. </summary>
+        </member>
+        <member name="M:Watchables.Tags`1.HasAny(Watchables.Tags{`0})">
+            <summary> Determines if the current <see cref="T:Watchables.Tags`1"/> contains any of the given <paramref name="tags"/>. </summary>
+        </member>
+        <member name="M:Watchables.Tags`1.HasAll(Watchables.Tags{`0})">
+            <summary> Determines if the current <see cref="T:Watchables.Tags`1"/> contains all of the given <paramref name="tags"/>. </summary>
+        </member>
+        <member name="M:Watchables.Tags`1.HasExactly(Watchables.Tags{`0})">
+            <summary> Determines if the current <see cref="T:Watchables.Tags`1"/> is identical to the given <paramref name="tags"/>. </summary>
+        </member>
+        <member name="M:Watchables.Tags`1.ToList">
+            <summary> Builds a <see cref="T:System.Collections.Generic.List`1"/> of the <typeparamref name="T"/> values contained in this <see cref="T:Watchables.Tags`1"/>. </summary>
+        </member>
+        <member name="M:Watchables.Tags`1.Equals(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.Tags`1.GetHashCode">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.Tags`1.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> representing all of the <typeparamref name="T"/> values contained in this <see cref="T:Watchables.Tags`1"/>.
+            </summary>
+        </member>
+        <member name="T:Watchables.Tag`1">
+            <summary>
+            A strongly-typed, extensible 32-bit <see cref="T:System.Enum"/> alternative that provides named singleton identities
+            with stable indices and bitmask values for use in generic and composable systems.
+            The <see cref="T:Watchables.Tags`1"/> companion struct can provide <see cref="T:System.FlagsAttribute"/> behavior for implementations of this type.
+            </summary>
+            <remarks>Derived types must declare a protected or private constructor.</remarks>
+            <typeparam name="TSelf"> The self-referential type of this Tag. </typeparam>
+        </member>
+        <member name="P:Watchables.Tag`1.AllTags">
+            <summary> All of the defined tags of this type. </summary>
+        </member>
+        <member name="P:Watchables.Tag`1.AllNames">
+            <summary> All of the defined names of the tags of this type. </summary>
+        </member>
+        <member name="P:Watchables.Tag`1.AllMask">
+            <summary> A bitmask which represents the combination of the <see cref="P:Watchables.Tag`1.Mask"/> of every defined tag. </summary>
+        </member>
+        <member name="P:Watchables.Tag`1.Name">
+            <summary> The name of this <typeparamref name="TSelf"/>. </summary>
+        </member>
+        <member name="P:Watchables.Tag`1.Index">
+            <summary> The bit index of this <typeparamref name="TSelf"/>. </summary>
+        </member>
+        <member name="P:Watchables.Tag`1.Mask">
+            <summary> The bitmask of this <typeparamref name="TSelf"/>. </summary>
+        </member>
+        <member name="M:Watchables.Tag`1.#ctor">
+            <summary> Tags should not declare any logic and must not be publicly constructible. </summary>
+        </member>
+        <member name="M:Watchables.Tag`1.Get(System.String)">
+            <summary>
+            Retrieves the <typeparamref name="TSelf"/> instance with the given <paramref name="name"/>.
+            </summary>
+            <exception cref="T:System.Collections.Generic.KeyNotFoundException"></exception>
+        </member>
+        <member name="M:Watchables.Tag`1.TryGet(System.String,`0@)">
+            <summary>
+            Attempts to retrieve the <typeparamref name="TSelf"/> instance with the given <paramref name="name"/>.
+            </summary>
+            <returns> If the <typeparamref name="TSelf"/> was found. </returns>
+        </member>
+        <member name="M:Watchables.Tag`1.FromIndex(System.Int32)">
+            <summary>
+            Retrieves the <typeparamref name="TSelf"/> instance with the given bit <paramref name="index"/>.
+            </summary>
+            <exception cref="T:System.Collections.Generic.KeyNotFoundException"></exception>
+        </member>
+        <member name="M:Watchables.Tag`1.TryGetFromIndex(System.Int32,`0@)">
+            <summary>
+            Attempts to retrieve the <typeparamref name="TSelf"/> instance with the given bit <paramref name="index"/>.
+            </summary>
+            <returns> If the <typeparamref name="TSelf"/> was found. </returns>
+        </member>
+        <member name="M:Watchables.Tag`1.FromMask(System.UInt32)">
+            <summary>
+            Retrieves the <typeparamref name="TSelf"/> instance with the given bit<paramref name="mask"/>.
+            </summary>
+            <exception cref="T:System.Collections.Generic.KeyNotFoundException"></exception>
+        </member>
+        <member name="M:Watchables.Tag`1.TryGetFromMask(System.UInt32,`0@)">
+            <summary>
+            Attempts to retrieve the <typeparamref name="TSelf"/> instance with the given bit<paramref name="mask"/>.
+            </summary>
+            <returns> If the <typeparamref name="TSelf"/> was found. </returns>
+        </member>
+        <member name="M:Watchables.Tag`1.ToString">
+            <summary> Gets a string containing the name of this <typeparamref name="TSelf"/> instance. </summary>
+            <returns> The name of this <typeparamref name="TSelf"/>. </returns>
+        </member>
+        <member name="M:Watchables.Tag`1.GetDefinedNames(System.Span{System.String})">
+            <summary>
+            This method is used to define the implementation's defined names, in the intended order, and then return the number of names.
+            May not exceed 32 values. It is recommended to create static
+            <typeparamref name="TSelf"/> properties in the implementation which call <see cref="M:Watchables.Tag`1.Get(System.String)"/> matching each of these names.
+            </summary>
+            <param name="names"> The <see cref="T:System.Span`1"/> to fill with defined names. </param>
+            <returns> The number of defined names. </returns>
+        </member>
+        <member name="T:Watchables.ClampedWatchable`1">
+            <summary>
+            An <see cref="T:Watchables.IWatchable`1"/> implementation wrapping an <see cref="T:Watchables.OperationChain`1"/> that clamps an internally managed value.
+            Provides methods to directly set, add to, or subtract from the internal value.
+            </summary>
+            <inheritdoc cref="T:Watchables.IEnforceNumeric`1"/>
+        </member>
+        <member name="P:Watchables.ClampedWatchable`1.Minimum">
+            <summary> The lower bound to clamp to. </summary>
+        </member>
+        <member name="P:Watchables.ClampedWatchable`1.Maximum">
+            <summary> The upper bound to clamp to. </summary>
+        </member>
+        <member name="M:Watchables.ClampedWatchable`1.Set(`0,System.Object)">
+            <summary> Attempts to set the <paramref name="value"/>. </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.ClampedWatchable`1.Add(`0,System.Object)">
+            <summary> Attempts to add the <paramref name="value"/>. </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.ClampedWatchable`1.Subtract(`0,System.Object)">
+            <summary> Attempts to subtract the <paramref name="value"/>. </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.ClampedWatchable`1.Sub(`0,System.Object)">
+            <inheritdoc cref="M:Watchables.ClampedWatchable`1.Subtract(`0,System.Object)"/>
+        </member>
+        <member name="M:Watchables.ClampedWatchable`1.Fill(System.Object)">
+            <summary> Attempts to set the value to the upper bound value of <see cref="P:Watchables.ClampedWatchable`1.Maximum"/>. </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.ClampedWatchable`1.Empty(System.Object)">
+            <summary> Attempts to set the value to the lower bound value of <see cref="P:Watchables.ClampedWatchable`1.Minimum"/>. </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.ClampedWatchable`1.CheckFatalDestruction(Watchables.IWatchable)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.ClampedWatchable`1.Evaluate">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.ClampedWatchable`1.BeforeDestroyed">
+            <inheritdoc/>
+        </member>
+        <member name="T:Watchables.CompositeLibrary`2">
+            <summary>
+            Extension of <see cref="T:Watchables.CompositeLibrary`3"/> for use with the numeric <see cref="T:Watchables.CompositeWatchable`1"/>. Provides no
+            additional functionality, serves as a shorthand for a common usage of the base class.
+            </summary>
+            <inheritdoc cref="T:Watchables.IEnforceNumeric`1"/>
+        </member>
+        <member name="T:Watchables.CompositeOperation">
+            <summary>
+            <see cref="T:System.Enum"/> defining the operation a <see cref="T:Watchables.CompositePart`1"/> represents.
+            </summary>
+        </member>
+        <member name="F:Watchables.CompositeOperation.Force">
+            <summary> Force the final value. This bypasses clamping. </summary>
+        </member>
+        <member name="F:Watchables.CompositeOperation.SetFinal">
+            <summary> Set the final value, ignoring translation and scaling. Obeys clamping. </summary>
+        </member>
+        <member name="F:Watchables.CompositeOperation.SetBase">
+            <summary> Set the starting value. </summary>
+        </member>
+        <member name="F:Watchables.CompositeOperation.Add">
+            <summary> Add to the value. </summary>
+        </member>
+        <member name="F:Watchables.CompositeOperation.Subtract">
+            <summary> Remove from the value. </summary>
+        </member>
+        <member name="F:Watchables.CompositeOperation.Multiply">
+            <summary> Multiply against the value. </summary>
+        </member>
+        <member name="F:Watchables.CompositeOperation.Divide">
+            <summary> Divide the value. </summary>
+        </member>
+        <member name="F:Watchables.CompositeOperation.Minimum">
+            <summary> Define a minimum value to check against after translation and scaling. </summary>
+        </member>
+        <member name="F:Watchables.CompositeOperation.Maximum">
+            <summary> Define a maximum value to check against after translation and scaling, and after minimum. </summary>
+        </member>
+        <member name="T:Watchables.CompositePart`1">
+            <summary> 
+            Numeric implementation of <see cref="T:Watchables.CompositePartBase`2"/> for use with <see cref="T:Watchables.CompositeWatchable`1"/>.
+            </summary>
+            <inheritdoc cref="T:Watchables.IEnforceNumeric`1"/>
+        </member>
+        <member name="P:Watchables.CompositePart`1.Operation">
+            <summary> The operation to perform. </summary>
+        </member>
+        <member name="T:Watchables.CompositeWatchable`1">
+            <summary>
+            Numeric implementation of <see cref="T:Watchables.CompositeBase`2"/>. Will always evaluate operations by performing translation
+            first, then scaling, and finally clamping. Setting operations will be sorted by <see cref="T:Watchables.CompositePartPriority"/>, with the first encountered
+            at the highest present priority being chosen.
+            </summary>
+            <inheritdoc cref="T:Watchables.IEnforceNumeric`1"/>
+        </member>
+        <member name="M:Watchables.CompositeWatchable`1.Evaluate">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.CompositeWatchable`1.Sort">
+            <inheritdoc/>
+        </member>
+        <member name="T:Watchables.IEnforceNumeric`1">
+            <summary>
+            Analyzer marker interface for generics that should only accept handled numeric types.
+            </summary>
+            <remarks>
+            Allows: <see langword="uint"/>, <see langword="ulong"/>, <see langword="int"/>, <see langword="long"/>,
+            <see langword="float"/>, <see langword="double"/>, <see langword="decimal"/>
+            </remarks>
+        </member>
+        <member name="T:Watchables.IntegerOperation">
+            <summary>
+            Wrapper for <see cref="T:Watchables.NumericOperation"/> which only allows operations that are valid for signed integer types.
+            Implicitly castable to <see cref="T:Watchables.NumericOperation"/>.
+            </summary>
+        </member>
+        <member name="P:Watchables.IntegerOperation.Add">
+            <inheritdoc cref="F:Watchables.NumericOperation.Add"/>
+        </member>
+        <member name="P:Watchables.IntegerOperation.Subtract">
+            <inheritdoc cref="F:Watchables.NumericOperation.Subtract"/>
+        </member>
+        <member name="P:Watchables.IntegerOperation.Multiply">
+            <inheritdoc cref="F:Watchables.NumericOperation.Multiply"/>
+        </member>
+        <member name="P:Watchables.IntegerOperation.Divide">
+            <inheritdoc cref="F:Watchables.NumericOperation.Divide"/>
+        </member>
+        <member name="P:Watchables.IntegerOperation.Modulo">
+            <inheritdoc cref="F:Watchables.NumericOperation.Modulo"/>
+        </member>
+        <member name="P:Watchables.IntegerOperation.Power">
+            <inheritdoc cref="F:Watchables.NumericOperation.Power"/>
+        </member>
+        <member name="P:Watchables.IntegerOperation.GreaterOf">
+            <inheritdoc cref="F:Watchables.NumericOperation.GreaterOf"/>
+        </member>
+        <member name="P:Watchables.IntegerOperation.LesserOf">
+            <inheritdoc cref="F:Watchables.NumericOperation.LesserOf"/>
+        </member>
+        <member name="P:Watchables.IntegerOperation.Absolute">
+            <inheritdoc cref="F:Watchables.NumericOperation.Absolute"/>
+        </member>
+        <member name="P:Watchables.IntegerOperation.AsNegative">
+            <inheritdoc cref="F:Watchables.NumericOperation.AsNegative"/>
+        </member>
+        <member name="P:Watchables.IntegerOperation.FlipSign">
+            <inheritdoc cref="F:Watchables.NumericOperation.FlipSign"/>
+        </member>
+        <member name="P:Watchables.IntegerOperation.Value">
+            <inheritdoc/>
+        </member>
+        <member name="T:Watchables.NumericOperation">
+            <summary>
+            <see cref="T:System.Enum"/> which defines generic math operations.
+            </summary>
+        </member>
+        <member name="F:Watchables.NumericOperation.Add">
+            <summary> Add two values. </summary>
+        </member>
+        <member name="F:Watchables.NumericOperation.Subtract">
+            <summary> Subtract a value from another. </summary>
+        </member>
+        <member name="F:Watchables.NumericOperation.Multiply">
+            <summary> Multiply two values. </summary>
+        </member>
+        <member name="F:Watchables.NumericOperation.Divide">
+            <summary> Divide a value by another. </summary>
+        </member>
+        <member name="F:Watchables.NumericOperation.Modulo">
+            <summary> Return the remainder of the division of a value by another. </summary>
+        </member>
+        <member name="F:Watchables.NumericOperation.Power">
+            <summary> Raise a value to the power of another. </summary>
+        </member>
+        <member name="F:Watchables.NumericOperation.Root">
+            <summary> Return the root of a value to the degree of another. </summary>
+        </member>
+        <member name="F:Watchables.NumericOperation.GreaterOf">
+            <summary> Return the larger of two values. </summary>
+        </member>
+        <member name="F:Watchables.NumericOperation.LesserOf">
+            <summary> Return the smaller of two values. </summary>
+        </member>
+        <member name="F:Watchables.NumericOperation.Round">
+            <summary> Round a value to nearest integer. </summary>
+        </member>
+        <member name="F:Watchables.NumericOperation.Floor">
+            <summary> Round a value downwards. </summary>
+        </member>
+        <member name="F:Watchables.NumericOperation.Ceiling">
+            <summary> Round a value upwards. </summary>
+        </member>
+        <member name="F:Watchables.NumericOperation.Truncate">
+            <summary> Remove any fractional portion of a value. </summary>
+        </member>
+        <member name="F:Watchables.NumericOperation.Absolute">
+            <summary> Return the non-negative magnitude of a value (distance from 0). </summary>
+        </member>
+        <member name="F:Watchables.NumericOperation.AsNegative">
+            <summary> Return the value as a negative with the same magnitude. </summary>
+        </member>
+        <member name="F:Watchables.NumericOperation.FlipSign">
+            <summary> Flip the sign of a value. </summary>
+        </member>
+        <member name="F:Watchables.NumericOperation.Reciprocal">
+            <summary> Return 1 divided by a value. </summary>
+        </member>
+        <member name="T:Watchables.NumericUtility">
+            <summary>
+            Helper class for generic math overloads
+            </summary>
+        </member>
+        <member name="M:Watchables.NumericUtility.Add(System.UInt32,System.UInt32)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Add``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Subtract(System.UInt32,System.UInt32)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Subtract``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Multiply(System.UInt32,System.UInt32)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Multiply``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Divide(System.UInt32,System.UInt32,System.Boolean)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Divide``1(``0,``0,System.Boolean)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Modulo(System.UInt32,System.UInt32,System.Boolean)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Modulo``1(``0,``0,System.Boolean)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Power(System.UInt32,System.UInt32)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Power``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.GreaterOf(System.UInt32,System.UInt32)">
+            <inheritdoc cref="M:Watchables.NumericUtility.GreaterOf``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.LesserOf(System.UInt32,System.UInt32)">
+            <inheritdoc cref="M:Watchables.NumericUtility.LesserOf``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Add(System.UInt64,System.UInt64)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Add``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Subtract(System.UInt64,System.UInt64)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Subtract``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Multiply(System.UInt64,System.UInt64)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Multiply``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Divide(System.UInt64,System.UInt64,System.Boolean)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Divide``1(``0,``0,System.Boolean)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Modulo(System.UInt64,System.UInt64,System.Boolean)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Modulo``1(``0,``0,System.Boolean)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Power(System.UInt64,System.UInt64)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Power``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.GreaterOf(System.UInt64,System.UInt64)">
+            <inheritdoc cref="M:Watchables.NumericUtility.GreaterOf``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.LesserOf(System.UInt64,System.UInt64)">
+            <inheritdoc cref="M:Watchables.NumericUtility.LesserOf``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Add(System.Int32,System.Int32)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Add``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Subtract(System.Int32,System.Int32)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Subtract``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Multiply(System.Int32,System.Int32)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Multiply``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Divide(System.Int32,System.Int32,System.Boolean)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Divide``1(``0,``0,System.Boolean)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Modulo(System.Int32,System.Int32,System.Boolean)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Modulo``1(``0,``0,System.Boolean)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Power(System.Int32,System.Int32)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Power``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.GreaterOf(System.Int32,System.Int32)">
+            <inheritdoc cref="M:Watchables.NumericUtility.GreaterOf``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.LesserOf(System.Int32,System.Int32)">
+            <inheritdoc cref="M:Watchables.NumericUtility.LesserOf``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Absolute(System.Int32)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Absolute``1(``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.AsNegative(System.Int32)">
+            <inheritdoc cref="M:Watchables.NumericUtility.AsNegative``1(``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.FlipSign(System.Int32)">
+            <inheritdoc cref="M:Watchables.NumericUtility.FlipSign``1(``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Add(System.Int64,System.Int64)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Add``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Subtract(System.Int64,System.Int64)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Subtract``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Multiply(System.Int64,System.Int64)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Multiply``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Divide(System.Int64,System.Int64,System.Boolean)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Divide``1(``0,``0,System.Boolean)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Modulo(System.Int64,System.Int64,System.Boolean)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Modulo``1(``0,``0,System.Boolean)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Power(System.Int64,System.Int64)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Power``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.GreaterOf(System.Int64,System.Int64)">
+            <inheritdoc cref="M:Watchables.NumericUtility.GreaterOf``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.LesserOf(System.Int64,System.Int64)">
+            <inheritdoc cref="M:Watchables.NumericUtility.LesserOf``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Absolute(System.Int64)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Absolute``1(``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.AsNegative(System.Int64)">
+            <inheritdoc cref="M:Watchables.NumericUtility.AsNegative``1(``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.FlipSign(System.Int64)">
+            <inheritdoc cref="M:Watchables.NumericUtility.FlipSign``1(``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Add(System.Decimal,System.Decimal)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Add``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Subtract(System.Decimal,System.Decimal)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Subtract``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Multiply(System.Decimal,System.Decimal)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Multiply``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Divide(System.Decimal,System.Decimal,System.Boolean)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Divide``1(``0,``0,System.Boolean)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Modulo(System.Decimal,System.Decimal,System.Boolean)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Modulo``1(``0,``0,System.Boolean)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Power(System.Decimal,System.Decimal)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Power``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Root(System.Decimal,System.Decimal,System.Boolean)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Root``1(``0,``0,System.Boolean)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.GreaterOf(System.Decimal,System.Decimal)">
+            <inheritdoc cref="M:Watchables.NumericUtility.GreaterOf``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.LesserOf(System.Decimal,System.Decimal)">
+            <inheritdoc cref="M:Watchables.NumericUtility.LesserOf``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Round(System.Decimal)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Round``1(``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Floor(System.Decimal)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Floor``1(``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Ceiling(System.Decimal)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Ceiling``1(``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Truncate(System.Decimal)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Truncate``1(``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Absolute(System.Decimal)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Absolute``1(``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.AsNegative(System.Decimal)">
+            <inheritdoc cref="M:Watchables.NumericUtility.AsNegative``1(``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.FlipSign(System.Decimal)">
+            <inheritdoc cref="M:Watchables.NumericUtility.FlipSign``1(``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Reciprocal(System.Decimal,System.Boolean)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Reciprocal``1(``0,System.Boolean)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Add(System.Single,System.Single)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Add``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Subtract(System.Single,System.Single)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Subtract``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Multiply(System.Single,System.Single)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Multiply``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Divide(System.Single,System.Single,System.Boolean)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Divide``1(``0,``0,System.Boolean)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Modulo(System.Single,System.Single,System.Boolean)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Modulo``1(``0,``0,System.Boolean)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Power(System.Single,System.Single)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Power``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Root(System.Single,System.Single,System.Boolean)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Root``1(``0,``0,System.Boolean)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.GreaterOf(System.Single,System.Single)">
+            <inheritdoc cref="M:Watchables.NumericUtility.GreaterOf``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.LesserOf(System.Single,System.Single)">
+            <inheritdoc cref="M:Watchables.NumericUtility.LesserOf``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Round(System.Single)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Round``1(``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Floor(System.Single)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Floor``1(``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Ceiling(System.Single)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Ceiling``1(``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Truncate(System.Single)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Truncate``1(``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Absolute(System.Single)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Absolute``1(``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.AsNegative(System.Single)">
+            <inheritdoc cref="M:Watchables.NumericUtility.AsNegative``1(``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.FlipSign(System.Single)">
+            <inheritdoc cref="M:Watchables.NumericUtility.FlipSign``1(``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Reciprocal(System.Single,System.Boolean)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Reciprocal``1(``0,System.Boolean)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Add(System.Double,System.Double)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Add``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Subtract(System.Double,System.Double)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Subtract``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Multiply(System.Double,System.Double)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Multiply``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Divide(System.Double,System.Double,System.Boolean)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Divide``1(``0,``0,System.Boolean)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Modulo(System.Double,System.Double,System.Boolean)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Modulo``1(``0,``0,System.Boolean)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Power(System.Double,System.Double)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Power``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Root(System.Double,System.Double,System.Boolean)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Root``1(``0,``0,System.Boolean)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.GreaterOf(System.Double,System.Double)">
+            <inheritdoc cref="M:Watchables.NumericUtility.GreaterOf``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.LesserOf(System.Double,System.Double)">
+            <inheritdoc cref="M:Watchables.NumericUtility.LesserOf``1(``0,``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Round(System.Double)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Round``1(``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Floor(System.Double)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Floor``1(``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Ceiling(System.Double)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Ceiling``1(``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Truncate(System.Double)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Truncate``1(``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Absolute(System.Double)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Absolute``1(``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.AsNegative(System.Double)">
+            <inheritdoc cref="M:Watchables.NumericUtility.AsNegative``1(``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.FlipSign(System.Double)">
+            <inheritdoc cref="M:Watchables.NumericUtility.FlipSign``1(``0)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Reciprocal(System.Double,System.Boolean)">
+            <inheritdoc cref="M:Watchables.NumericUtility.Reciprocal``1(``0,System.Boolean)"/>
+        </member>
+        <member name="M:Watchables.NumericUtility.Add``1(``0,``0)">
+            <summary> Returns the sum of the <paramref name="value"/> and <paramref name="operand"/>. </summary>
+        </member>
+        <member name="M:Watchables.NumericUtility.Subtract``1(``0,``0)">
+            <summary> Returns the difference of the <paramref name="value"/> and <paramref name="operand"/>. </summary>
+        </member>
+        <member name="M:Watchables.NumericUtility.Multiply``1(``0,``0)">
+            <summary> Returns the product of the <paramref name="value"/> and <paramref name="operand"/>. </summary>
+        </member>
+        <member name="M:Watchables.NumericUtility.Divide``1(``0,``0,System.Boolean)">
+            <summary> Returns the quotient of the <paramref name="value"/> and <paramref name="operand"/>. </summary>
+            <param name="guard"> Whether to return 0 instead of throwing an error if the <paramref name="operand"/> is 0. </param>
+        </member>
+        <member name="M:Watchables.NumericUtility.Modulo``1(``0,``0,System.Boolean)">
+            <summary> Returns the remainder of the division between the <paramref name="value"/> and <paramref name="operand"/>. </summary>
+            <param name="guard"> Whether to return 0 instead of throwing an error if the <paramref name="operand"/> is 0. </param>
+        </member>
+        <member name="M:Watchables.NumericUtility.Power``1(``0,``0)">
+            <summary> Returns the result of the <paramref name="value"/> raised to the <paramref name="operand"/>. </summary>
+        </member>
+        <member name="M:Watchables.NumericUtility.Root``1(``0,``0,System.Boolean)">
+            <summary> Returns the root of the <paramref name="value"/> with the <paramref name="operand"/> as the degree of the root. </summary>
+            <param name="guard"> Whether to return 0 instead of throwing an error if the <paramref name="operand"/> is 0. </param>
+        </member>
+        <member name="M:Watchables.NumericUtility.GreaterOf``1(``0,``0)">
+            <summary> Returns larger of <paramref name="value"/> and <paramref name="operand"/>. </summary>
+        </member>
+        <member name="M:Watchables.NumericUtility.LesserOf``1(``0,``0)">
+            <summary> Returns smaller of <paramref name="value"/> and <paramref name="operand"/>. </summary>
+        </member>
+        <member name="M:Watchables.NumericUtility.Round``1(``0)">
+            <summary> Returns the <paramref name="value"/> rounded to the nearest integer. </summary>
+        </member>
+        <member name="M:Watchables.NumericUtility.Floor``1(``0)">
+            <summary> Returns the <paramref name="value"/> rounded downward. </summary>
+        </member>
+        <member name="M:Watchables.NumericUtility.Ceiling``1(``0)">
+            <summary> Returns the <paramref name="value"/> rounded upward. </summary>
+        </member>
+        <member name="M:Watchables.NumericUtility.Truncate``1(``0)">
+            <summary> Returns the <paramref name="value"/> with any fractional portion removed. </summary>
+        </member>
+        <member name="M:Watchables.NumericUtility.Absolute``1(``0)">
+            <summary> Returns the non-negative magnitude of the <paramref name="value"/> (distance from 0). </summary>
+        </member>
+        <member name="M:Watchables.NumericUtility.AsNegative``1(``0)">
+            <summary> Returns the <paramref name="value"/> as negative with the same magnitude. </summary>
+        </member>
+        <member name="M:Watchables.NumericUtility.FlipSign``1(``0)">
+            <summary> Returns the <paramref name="value"/> with its sign flipped. </summary>
+        </member>
+        <member name="M:Watchables.NumericUtility.Reciprocal``1(``0,System.Boolean)">
+            <summary> Returns quotient of 1 divided by the <paramref name="value"/>. </summary>
+            <param name="guard"> Whether to return 0 instead of throwing an error if the <paramref name="value"/> is 0. </param>
+        </member>
+        <member name="T:Watchables.OperationBuilder">
+            <summary>
+            Static constructors for <see cref="T:Watchables.OperationWatchable`1"/> and <see cref="T:Watchables.OperationStep`1"/>, as well as 
+            constructions for common <see cref="T:Watchables.OperationChain`1"/> uses.
+            </summary>
+        </member>
+        <member name="M:Watchables.OperationBuilder.Step(Watchables.UnsignedOperation,Watchables.IWrapper{System.UInt32},System.Boolean)">
+            <inheritdoc cref="M:Watchables.OperationBuilder.Step``1(Watchables.NumericOperation,Watchables.IWrapper{``0},System.Boolean)"/>
+        </member>
+        <member name="M:Watchables.OperationBuilder.Step(Watchables.UnsignedOperation,Watchables.IWrapper{System.UInt64},System.Boolean)">
+            <inheritdoc cref="M:Watchables.OperationBuilder.Step``1(Watchables.NumericOperation,Watchables.IWrapper{``0},System.Boolean)"/>
+        </member>
+        <member name="M:Watchables.OperationBuilder.Step(Watchables.IntegerOperation,Watchables.IWrapper{System.Int32},System.Boolean)">
+            <inheritdoc cref="M:Watchables.OperationBuilder.Step``1(Watchables.NumericOperation,Watchables.IWrapper{``0},System.Boolean)"/>
+        </member>
+        <member name="M:Watchables.OperationBuilder.Step(Watchables.IntegerOperation,Watchables.IWrapper{System.Int64},System.Boolean)">
+            <inheritdoc cref="M:Watchables.OperationBuilder.Step``1(Watchables.NumericOperation,Watchables.IWrapper{``0},System.Boolean)"/>
+        </member>
+        <member name="M:Watchables.OperationBuilder.Step(Watchables.NumericOperation,Watchables.IWrapper{System.Decimal},System.Boolean)">
+            <inheritdoc cref="M:Watchables.OperationBuilder.Step``1(Watchables.NumericOperation,Watchables.IWrapper{``0},System.Boolean)"/>
+        </member>
+        <member name="M:Watchables.OperationBuilder.Step(Watchables.NumericOperation,Watchables.IWrapper{System.Single},System.Boolean)">
+            <inheritdoc cref="M:Watchables.OperationBuilder.Step``1(Watchables.NumericOperation,Watchables.IWrapper{``0},System.Boolean)"/>
+        </member>
+        <member name="M:Watchables.OperationBuilder.Step(Watchables.NumericOperation,Watchables.IWrapper{System.Double},System.Boolean)">
+            <inheritdoc cref="M:Watchables.OperationBuilder.Step``1(Watchables.NumericOperation,Watchables.IWrapper{``0},System.Boolean)"/>
+        </member>
+        <member name="M:Watchables.OperationBuilder.Watchable(Watchables.UnsignedOperation,Watchables.IWrapper{System.UInt32},Watchables.IWrapper{System.UInt32})">
+            <inheritdoc cref="M:Watchables.OperationBuilder.Watchable``1(Watchables.NumericOperation,Watchables.IWrapper{System.UInt16},Watchables.IWrapper{System.UInt16})"/>
+        </member>
+        <member name="M:Watchables.OperationBuilder.Watchable(Watchables.UnsignedOperation,Watchables.IWrapper{System.UInt64},Watchables.IWrapper{System.UInt64})">
+            <inheritdoc cref="M:Watchables.OperationBuilder.Watchable``1(Watchables.NumericOperation,Watchables.IWrapper{System.UInt16},Watchables.IWrapper{System.UInt16})"/>
+        </member>
+        <member name="M:Watchables.OperationBuilder.Watchable(Watchables.IntegerOperation,Watchables.IWrapper{System.Int32},Watchables.IWrapper{System.Int32})">
+            <inheritdoc cref="M:Watchables.OperationBuilder.Watchable``1(Watchables.NumericOperation,Watchables.IWrapper{System.UInt16},Watchables.IWrapper{System.UInt16})"/>
+        </member>
+        <member name="M:Watchables.OperationBuilder.Watchable(Watchables.IntegerOperation,Watchables.IWrapper{System.Int64},Watchables.IWrapper{System.Int64})">
+            <inheritdoc cref="M:Watchables.OperationBuilder.Watchable``1(Watchables.NumericOperation,Watchables.IWrapper{System.UInt16},Watchables.IWrapper{System.UInt16})"/>
+        </member>
+        <member name="M:Watchables.OperationBuilder.Watchable(Watchables.NumericOperation,Watchables.IWrapper{System.Decimal},Watchables.IWrapper{System.Decimal})">
+            <inheritdoc cref="M:Watchables.OperationBuilder.Watchable``1(Watchables.NumericOperation,Watchables.IWrapper{System.UInt16},Watchables.IWrapper{System.UInt16})"/>
+        </member>
+        <member name="M:Watchables.OperationBuilder.Watchable(Watchables.NumericOperation,Watchables.IWrapper{System.Single},Watchables.IWrapper{System.Single})">
+            <inheritdoc cref="M:Watchables.OperationBuilder.Watchable``1(Watchables.NumericOperation,Watchables.IWrapper{System.UInt16},Watchables.IWrapper{System.UInt16})"/>
+        </member>
+        <member name="M:Watchables.OperationBuilder.Watchable(Watchables.NumericOperation,Watchables.IWrapper{System.Double},Watchables.IWrapper{System.Double})">
+            <inheritdoc cref="M:Watchables.OperationBuilder.Watchable``1(Watchables.NumericOperation,Watchables.IWrapper{System.UInt16},Watchables.IWrapper{System.UInt16})"/>
+        </member>
+        <member name="M:Watchables.OperationBuilder.Clamp``1(Watchables.IWrapper{``0},Watchables.IWrapper{``0},Watchables.IWrapper{``0})">
+            <summary>
+            Creates a new <see cref="T:Watchables.OperationChain`1"/> which will clamp the <paramref name="value"/> between <paramref name="min"/> and <paramref name="max"/>
+            </summary>
+        </member>
+        <member name="M:Watchables.OperationBuilder.RatioScale(Watchables.IWrapper{System.Decimal},Watchables.IWrapper{System.Decimal},Watchables.IWrapper{System.Decimal},System.Boolean,System.Boolean)">
+            <summary>
+            Creates a new <see cref="T:Watchables.OperationChain`1"/> which scales the <paramref name="value"/> by the ratio of the 
+            <paramref name="ante"/>cedent to the <paramref name="cons"/>equent.
+            <br/> If <paramref name="baseOne"/> is true, the ratio will be offset by 1 so that a ratio of 1:1 results in a doubling. 
+            <br/> If <paramref name="normalize"/> is true, the ratio (before offset from baseOne) will be clamped between 0 and 1.
+            </summary>
+        </member>
+        <member name="M:Watchables.OperationBuilder.RatioScale(Watchables.IWrapper{System.Single},Watchables.IWrapper{System.Single},Watchables.IWrapper{System.Single},System.Boolean,System.Boolean)">
+            <summary>
+            Creates a new <see cref="T:Watchables.OperationChain`1"/> which scales the <paramref name="value"/> by the ratio of the 
+            <paramref name="ante"/>cedent to the <paramref name="cons"/>equent.
+            <br/> If <paramref name="baseOne"/> is true, the ratio will be offset by 1 so that a ratio of 1:1 results in a doubling. 
+            <br/> If <paramref name="normalize"/> is true, the ratio (before offset from baseOne) will be clamped between 0 and 1.
+            </summary>
+        </member>
+        <member name="M:Watchables.OperationBuilder.RatioScale(Watchables.IWrapper{System.Double},Watchables.IWrapper{System.Double},Watchables.IWrapper{System.Double},System.Boolean,System.Boolean)">
+            <summary>
+            Creates a new <see cref="T:Watchables.OperationChain`1"/> which scales the <paramref name="value"/> by the ratio of the 
+            <paramref name="ante"/>cedent to the <paramref name="cons"/>equent.
+            <br/> If <paramref name="baseOne"/> is true, the ratio will be offset by 1 so that a ratio of 1:1 results in a doubling. 
+            <br/> If <paramref name="normalize"/> is true, the ratio (before offset from baseOne) will be clamped between 0 and 1.
+            </summary>
+        </member>
+        <member name="M:Watchables.OperationBuilder.Step``1(Watchables.NumericOperation,Watchables.IWrapper{``0},System.Boolean)">
+            <summary> Creates a new <see cref="T:Watchables.OperationStep`1"/> which performs the given <paramref name="operation"/>. </summary>
+            <param name="required"> Whether the step is required for the <see cref="T:Watchables.OperationChain`1"/> it's a part of. </param>
+        </member>
+        <member name="M:Watchables.OperationBuilder.Watchable``1(Watchables.NumericOperation,Watchables.IWrapper{System.UInt16},Watchables.IWrapper{System.UInt16})">
+            <summary> Creates a new <see cref="T:Watchables.OperationWatchable`1"/> which performs the given <paramref name="operation"/>. </summary>
+        </member>
+        <member name="T:Watchables.OperationChainExtensions">
+            <summary>
+            Utility extensions for <see cref="T:Watchables.OperationChain`1"/>
+            </summary>
+        </member>
+        <member name="M:Watchables.OperationChainExtensions.Then(Watchables.OperationChain{System.UInt32},Watchables.UnsignedOperation,Watchables.IWrapper{System.UInt32},System.Boolean,System.Object)">
+            <inheritdoc cref="M:Watchables.OperationChain`1.Then(Watchables.OperationStep{`0},System.Object)"/>
+        </member>
+        <member name="M:Watchables.OperationChainExtensions.Then(Watchables.OperationChain{System.UInt64},Watchables.UnsignedOperation,Watchables.IWrapper{System.UInt64},System.Boolean,System.Object)">
+            <inheritdoc cref="M:Watchables.OperationChain`1.Then(Watchables.OperationStep{`0},System.Object)"/>
+        </member>
+        <member name="M:Watchables.OperationChainExtensions.Then(Watchables.OperationChain{System.Int32},Watchables.IntegerOperation,Watchables.IWrapper{System.Int32},System.Boolean,System.Object)">
+            <inheritdoc cref="M:Watchables.OperationChain`1.Then(Watchables.OperationStep{`0},System.Object)"/>
+        </member>
+        <member name="M:Watchables.OperationChainExtensions.Then(Watchables.OperationChain{System.Int64},Watchables.IntegerOperation,Watchables.IWrapper{System.Int64},System.Boolean,System.Object)">
+            <inheritdoc cref="M:Watchables.OperationChain`1.Then(Watchables.OperationStep{`0},System.Object)"/>
+        </member>
+        <member name="M:Watchables.OperationChainExtensions.Then(Watchables.OperationChain{System.Decimal},Watchables.NumericOperation,Watchables.IWrapper{System.Decimal},System.Boolean,System.Object)">
+            <inheritdoc cref="M:Watchables.OperationChain`1.Then(Watchables.OperationStep{`0},System.Object)"/>
+        </member>
+        <member name="M:Watchables.OperationChainExtensions.Then(Watchables.OperationChain{System.Single},Watchables.NumericOperation,Watchables.IWrapper{System.Single},System.Boolean,System.Object)">
+            <inheritdoc cref="M:Watchables.OperationChain`1.Then(Watchables.OperationStep{`0},System.Object)"/>
+        </member>
+        <member name="M:Watchables.OperationChainExtensions.Then(Watchables.OperationChain{System.Double},Watchables.NumericOperation,Watchables.IWrapper{System.Double},System.Boolean,System.Object)">
+            <inheritdoc cref="M:Watchables.OperationChain`1.Then(Watchables.OperationStep{`0},System.Object)"/>
+        </member>
+        <member name="M:Watchables.OperationChainExtensions.AddStep(Watchables.OperationChain{System.UInt32},Watchables.UnsignedOperation,Watchables.IWrapper{System.UInt32},System.Boolean,System.Object)">
+            <inheritdoc cref="M:Watchables.OperationChain`1.AddStep(Watchables.OperationStep{`0},System.Object)"/>
+        </member>
+        <member name="M:Watchables.OperationChainExtensions.AddStep(Watchables.OperationChain{System.UInt64},Watchables.UnsignedOperation,Watchables.IWrapper{System.UInt64},System.Boolean,System.Object)">
+            <inheritdoc cref="M:Watchables.OperationChain`1.AddStep(Watchables.OperationStep{`0},System.Object)"/>
+        </member>
+        <member name="M:Watchables.OperationChainExtensions.AddStep(Watchables.OperationChain{System.Int32},Watchables.IntegerOperation,Watchables.IWrapper{System.Int32},System.Boolean,System.Object)">
+            <inheritdoc cref="M:Watchables.OperationChain`1.AddStep(Watchables.OperationStep{`0},System.Object)"/>
+        </member>
+        <member name="M:Watchables.OperationChainExtensions.AddStep(Watchables.OperationChain{System.Int64},Watchables.IntegerOperation,Watchables.IWrapper{System.Int64},System.Boolean,System.Object)">
+            <inheritdoc cref="M:Watchables.OperationChain`1.AddStep(Watchables.OperationStep{`0},System.Object)"/>
+        </member>
+        <member name="M:Watchables.OperationChainExtensions.AddStep(Watchables.OperationChain{System.Decimal},Watchables.NumericOperation,Watchables.IWrapper{System.Decimal},System.Boolean,System.Object)">
+            <inheritdoc cref="M:Watchables.OperationChain`1.AddStep(Watchables.OperationStep{`0},System.Object)"/>
+        </member>
+        <member name="M:Watchables.OperationChainExtensions.AddStep(Watchables.OperationChain{System.Single},Watchables.NumericOperation,Watchables.IWrapper{System.Single},System.Boolean,System.Object)">
+            <inheritdoc cref="M:Watchables.OperationChain`1.AddStep(Watchables.OperationStep{`0},System.Object)"/>
+        </member>
+        <member name="M:Watchables.OperationChainExtensions.AddStep(Watchables.OperationChain{System.Double},Watchables.NumericOperation,Watchables.IWrapper{System.Double},System.Boolean,System.Object)">
+            <inheritdoc cref="M:Watchables.OperationChain`1.AddStep(Watchables.OperationStep{`0},System.Object)"/>
+        </member>
+        <member name="T:Watchables.OperationChain`1">
+            <summary>
+            An <see cref="T:Watchables.IWatchable`1"/> implementation which represents a series of <see cref="T:Watchables.NumericOperation"/>s performed on 
+            a base value in a set sequence. Operations and operands are defined by <see cref="T:Watchables.OperationStep`1"/>.
+            </summary>
+            <inheritdoc cref="T:Watchables.IEnforceNumeric`1"/>
+        </member>
+        <member name="M:Watchables.OperationChain`1.AddStep(Watchables.OperationStep{`0},System.Object)">
+            <summary> Attempts to add a new <see cref="T:Watchables.OperationStep`1"/> to the <see cref="T:Watchables.OperationChain`1"/>. </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.OperationChain`1.Then(Watchables.OperationStep{`0},System.Object)">
+            <summary> Attempts to add a new <see cref="T:Watchables.OperationStep`1"/> to the <see cref="T:Watchables.OperationChain`1"/>. </summary>
+            <remarks> Allows for method chaining the addition of <see cref="T:Watchables.OperationStep`1"/>s. </remarks>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> The <see cref="T:Watchables.OperationChain`1"/> this was called on. </returns>
+        </member>
+        <member name="M:Watchables.OperationChain`1.AddSteps(System.Collections.Generic.IEnumerable{Watchables.OperationStep{`0}},System.Object)">
+            <summary> Attempts to add a range of new <see cref="T:Watchables.OperationStep`1"/>s to the <see cref="T:Watchables.OperationChain`1"/>. </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.OperationChain`1.RemoveStep(Watchables.OperationStep{`0},System.Object)">
+            <summary> Attempts to remove a <see cref="T:Watchables.OperationStep`1"/> from the <see cref="T:Watchables.OperationChain`1"/>. </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.OperationChain`1.RemoveSteps(System.Collections.Generic.IEnumerable{Watchables.OperationStep{`0}},System.Object)">
+            <summary> Attempts to remove a range of <see cref="T:Watchables.OperationStep`1"/>s from the <see cref="T:Watchables.OperationChain`1"/>. </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.OperationChain`1.OnNonFatalDestruction(Watchables.IWatchable)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.OperationChain`1.CheckFatalDestruction(Watchables.IWatchable)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.OperationChain`1.BeforeDestroyed">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.OperationChain`1.Evaluate">
+            <inheritdoc/>
+        </member>
+        <member name="T:Watchables.OperationStep`1">
+            <summary>
+            Represents a single operation in an <see cref="T:Watchables.OperationChain`1"/>. Must be constructed via
+            <see cref="T:Watchables.OperationBuilder"/>'s Step overload methods to ensure valid operations for the given type.
+            </summary>
+            <remarks> 
+            While possible, it is not recommended to have the same <see cref="T:Watchables.OperationStep`1"/> in multiple 
+            <see cref="T:Watchables.OperationChain`1"/> instances unless under strict oversight.
+            </remarks>
+        </member>
+        <member name="P:Watchables.OperationStep`1.IsRequired">
+            <summary> Whether this step is required for the <see cref="T:Watchables.OperationChain`1"/> it is a part of. </summary>
+        </member>
+        <member name="P:Watchables.OperationStep`1.ValueSource">
+            <summary> The source of the step's <typeparamref name="T"/> value. </summary>
+        </member>
+        <member name="P:Watchables.OperationStep`1.Value">
+            <inheritdoc/>
+        </member>
+        <member name="P:Watchables.OperationStep`1.Operation">
+            <summary> The operation this step performs. </summary>
+        </member>
+        <member name="T:Watchables.OperationWatchable`1">
+            <summary>
+            Represents a single operation defined by <see cref="T:Watchables.NumericOperation"/>. Must be constructed via <see cref="T:Watchables.OperationBuilder"/>'s 
+            Watchable overload methods to ensure valid operations for the given type.
+            </summary>
+            <inheritdoc cref="T:Watchables.IEnforceNumeric`1"/>
+        </member>
+        <member name="F:Watchables.OperationWatchable`1.Operation">
+            <summary> The operation this instance performs. </summary>
+        </member>
+        <member name="M:Watchables.OperationWatchable`1.Evaluate">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.OperationWatchable`1.CheckFatalDestruction(Watchables.IWatchable)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.OperationWatchable`1.BeforeDestroyed">
+            <inheritdoc/>
+        </member>
+        <member name="T:Watchables.UnsignedOperation">
+            <summary>
+            Wrapper for <see cref="T:Watchables.NumericOperation"/> which only allows operations that are valid for unsigned integer types.
+            Implicitly castable to <see cref="T:Watchables.NumericOperation"/> and <see cref="T:Watchables.IntegerOperation"/>.
+            </summary>
+        </member>
+        <member name="P:Watchables.UnsignedOperation.Add">
+            <inheritdoc cref="F:Watchables.NumericOperation.Add"/>
+        </member>
+        <member name="P:Watchables.UnsignedOperation.Subtract">
+            <inheritdoc cref="F:Watchables.NumericOperation.Subtract"/>
+        </member>
+        <member name="P:Watchables.UnsignedOperation.Multiply">
+            <inheritdoc cref="F:Watchables.NumericOperation.Multiply"/>
+        </member>
+        <member name="P:Watchables.UnsignedOperation.Divide">
+            <inheritdoc cref="F:Watchables.NumericOperation.Divide"/>
+        </member>
+        <member name="P:Watchables.UnsignedOperation.Modulo">
+            <inheritdoc cref="F:Watchables.NumericOperation.Modulo"/>
+        </member>
+        <member name="P:Watchables.UnsignedOperation.Power">
+            <inheritdoc cref="F:Watchables.NumericOperation.Power"/>
+        </member>
+        <member name="P:Watchables.UnsignedOperation.GreaterOf">
+            <inheritdoc cref="F:Watchables.NumericOperation.GreaterOf"/>
+        </member>
+        <member name="P:Watchables.UnsignedOperation.LesserOf">
+            <inheritdoc cref="F:Watchables.NumericOperation.LesserOf"/>
+        </member>
+        <member name="T:Watchables.BasicWatchable`1">
+            <summary>
+            An implementation of <see cref="T:Watchables.IWatchable`1"/> which is directly mutable via <see cref="M:Watchables.BasicWatchable`1.SetValue(`0,System.Object)"/>.
+            </summary>
+        </member>
+        <member name="P:Watchables.BasicWatchable`1.IsSealed">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.BasicWatchable`1.SetSealed(System.Boolean,System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.BasicWatchable`1.SetValue(`0,System.Object)">
+            <summary> Attempts to set the <paramref name="value"/>. </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.BasicWatchable`1.MutationGuard(System.Action,System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Watchables.BasicWrapper`1">
+            <summary>
+            A mutable and sealable implementation of <see cref="T:Watchables.IWrapper`1"/>. 
+            Useful for stable value references without event and destruction semantics.
+            </summary>
+        </member>
+        <member name="P:Watchables.BasicWrapper`1.Value">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.BasicWrapper`1.SetValue(`0,System.Object)">
+            <summary> Attempts to set the <paramref name="value"/>. </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="T:Watchables.ConversionWatchable`2">
+            <summary>
+            An <see cref="T:Watchables.IWatchable`1"/> implementation which converts one <see cref="T:System.IConvertible"/> type to another.
+            </summary>
+            <typeparam name="TSource"> The type to convert from. </typeparam>
+            <typeparam name="TValue"> The type to convert to. </typeparam>
+        </member>
+        <member name="M:Watchables.ConversionWatchable`2.CheckFatalDestruction(Watchables.IWatchable)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.ConversionWatchable`2.Evaluate">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.ConversionWatchable`2.BeforeDestroyed">
+            <inheritdoc/>
+        </member>
+        <member name="T:Watchables.ConversionWrapper`2">
+            <summary>
+            An <see cref="T:Watchables.IWrapper`1"/> implementation which converts one <see cref="T:System.IConvertible"/> type to another.
+            </summary>
+            <typeparam name="TSource"> The type to convert from. </typeparam>
+            <typeparam name="TValue"> The type to convert to. </typeparam>
+        </member>
+        <member name="P:Watchables.ConversionWrapper`2.Value">
+            <inheritdoc/>
+        </member>
+        <member name="T:Watchables.ReadOnlyWatchable`1">
+            <summary>
+            Read-only wrapper for <see cref="T:Watchables.IWatchable`1"/> instances which has identical value, lifetime, and change propagation.
+            </summary>
+        </member>
+        <member name="P:Watchables.ReadOnlyWatchable`1.IsOwned">
+            <summary> Always <see langword="false"/> -- Read-only implementation which cannot be owned. </summary>
+        </member>
+        <member name="P:Watchables.ReadOnlyWatchable`1.IsDestroyed">
+            <inheritdoc/>
+        </member>
+        <member name="P:Watchables.ReadOnlyWatchable`1.Value">
+            <inheritdoc/>
+        </member>
+        <member name="E:Watchables.ReadOnlyWatchable`1.Changed">
+            <inheritdoc/>
+        </member>
+        <member name="E:Watchables.ReadOnlyWatchable`1.Destroyed">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.ReadOnlyWatchable`1.ClearOwner(System.Object)">
+            <summary> Unused -- Read-only implementation which only propagates state and value from a contained <see cref="T:Watchables.IWatchable`1"/>. </summary>
+            <returns> <see langword="false"/> </returns>
+        </member>
+        <member name="M:Watchables.ReadOnlyWatchable`1.Destroy(System.Object)">
+            <summary> Unused -- Read-only implementation which only propagates state and value from a contained <see cref="T:Watchables.IWatchable`1"/>. </summary>
+            <returns> <see langword="false"/> </returns>
+        </member>
+        <member name="M:Watchables.ReadOnlyWatchable`1.SetOwner(System.Object)">
+            <summary> Unused -- Read-only implementation which only propagates state and value from a contained <see cref="T:Watchables.IWatchable`1"/>. </summary>
+            <returns> <see langword="false"/> </returns>
+        </member>
+        <member name="M:Watchables.ReadOnlyWatchable`1.CompareToOwner(System.Object)">
+            <summary> Unused -- Read-only implementation which only propagates state and value from a contained <see cref="T:Watchables.IWatchable`1"/>. </summary>
+            <returns> <see langword="false"/> </returns>
+        </member>
+        <member name="M:Watchables.ReadOnlyWatchable`1.ToString">
+            <summary> Returns a string representation of the underlying value. </summary>
+        </member>
+        <member name="T:Watchables.ReadOnlyWrapper`1">
+            <summary>
+            An read-only implementation of <see cref="T:Watchables.IWrapper`1"/>.
+            </summary>
+        </member>
+        <member name="P:Watchables.ReadOnlyWrapper`1.Value">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.ReadOnlyWrapper`1.ToString">
+            <summary> Returns a string representation of the underlying value. </summary>
+        </member>
+        <member name="T:Watchables.Requestable">
+            <summary>
+            An <see cref="T:Watchables.IWatchable`1"/> implementation which allows objects to request an inversion of a <see cref="T:System.Boolean"/> value.
+            So long as there are any requests, the value will be inverted.
+            </summary>
+        </member>
+        <member name="F:Watchables.Requestable.DefaultValue">
+            <summary> The value of this instance when there are no requests. </summary>
+        </member>
+        <member name="M:Watchables.Requestable.AddRequest(System.Object)">
+            <summary> Attempts to add a request to invert the <see cref="T:System.Boolean"/> value. </summary>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.Requestable.RemoveRequest(System.Object)">
+            <summary> Attempts to remove a request to invert the <see cref="T:System.Boolean"/> value. </summary>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.Requestable.Clear(System.Object)">
+            <summary> Attempts to remove all requests. </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="T:Watchables.StringChain">
+            <summary>
+            An <see cref="T:Watchables.IWatchable`1"/> implementation which constructs a single <see cref="T:System.String"/> from inputs provided in a set order.
+            </summary>
+        </member>
+        <member name="M:Watchables.StringChain.AddInput(System.Object,System.Boolean,System.Object)">
+            <summary> Attempts to add an <paramref name="input"/> to the <see cref="T:Watchables.StringChain"/>. </summary>
+            <param name="required"> Whether the input is required for this chain. Only relevant for <see cref="T:Watchables.IWatchable"/> inputs. </param>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.StringChain.AddInputs(System.Collections.Generic.IEnumerable{System.ValueTuple{System.Object,System.Boolean}},System.Object)">
+            <summary> Attempts to add a range of <paramref name="inputs"/> and their required status to the <see cref="T:Watchables.StringChain"/>. </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.StringChain.AddInputs(System.Collections.Generic.IEnumerable{System.Object},System.Boolean,System.Object)">
+            <summary> Attempts to add a range of <paramref name="inputs"/> to the <see cref="T:Watchables.StringChain"/>. </summary>
+            <param name="required"> Whether the inputs are required for this chain. Only relevant for <see cref="T:Watchables.IWatchable"/> inputs. </param>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.StringChain.RemoveInput(System.Object,System.Object)">
+            <summary> Attempts to remove an <paramref name="input"/> from the <see cref="T:Watchables.StringChain"/>. </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.StringChain.RemoveInputs(System.Collections.Generic.IEnumerable{System.Object},System.Object)">
+            <summary> Attempts to remove a range of <paramref name="inputs"/> from the <see cref="T:Watchables.StringChain"/>. </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.StringChain.Insert(System.Object,System.Int32,System.Boolean,System.Object)">
+            <summary> Attempts to insert an <paramref name="input"/> in the <see cref="T:Watchables.StringChain"/> at the given <paramref name="index"/>. </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <param name="required"> Whether the input is required for this chain. Only relevant for <see cref="T:Watchables.IWatchable"/> inputs. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.StringChain.InsertBefore(System.Object,System.Object,System.Boolean,System.Object)">
+            <summary> Attempts to insert an <paramref name="input"/> in the <see cref="T:Watchables.StringChain"/> before the given <paramref name="target"/>. </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <param name="required"> Whether the input is required for this chain. Only relevant for <see cref="T:Watchables.IWatchable"/> inputs. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.StringChain.InsertAfter(System.Object,System.Object,System.Boolean,System.Object)">
+            <summary> Attempts to insert an <paramref name="input"/> in the <see cref="T:Watchables.StringChain"/> after the given <paramref name="target"/>. </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <param name="required"> Whether the input is required for this chain. Only relevant for <see cref="T:Watchables.IWatchable"/> inputs. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.StringChain.Clear(System.Object)">
+            <summary> Attempts to clear all inputs from the <see cref="T:Watchables.StringChain"/>. </summary>
+            <param name="owner"> The instance's current owner, used to bypass sealed state. </param>
+            <returns> Whether the operation was allowed. </returns>
+        </member>
+        <member name="M:Watchables.StringChain.CheckFatalDestruction(Watchables.IWatchable)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.StringChain.Evaluate">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.StringChain.BeforeDestroyed">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.StringChain.OnNonFatalDestruction(Watchables.IWatchable)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Watchables.WrapperExtensions">
+            <summary>
+            Extension methods for quickly providing an <see cref="T:Watchables.IWrapper`1"/> for a value.
+            </summary>
+        </member>
+        <member name="M:Watchables.WrapperExtensions.Wrap``1(``0)">
+            <summary> Creates a new <see cref="T:Watchables.ReadOnlyWrapper`1"/> containing the <paramref name="value"/>. </summary>
+        </member>
+        <member name="M:Watchables.WrapperExtensions.WrapMutable``1(``0,System.Object)">
+            <summary> 
+            Creates a new <see cref="T:Watchables.BasicWrapper`1"/> containing the <paramref name="value"/>. 
+            Can automatically assign the <paramref name="owner"/> as well.
+            </summary>
+        </member>
+    </members>
+</doc>

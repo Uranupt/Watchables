@@ -1,9 +1,14 @@
 using System.Collections.Generic;
+using System.Collections;
 
 
 namespace Watchables
-{ 
-  public readonly struct Tags<T> where T : Tag<T>
+{
+  /// <summary>
+  /// A value type representing a collection of <see cref="Tag{T}"/> values. Implements <see cref="IEnumerable{T}"/>.
+  /// </summary>
+  /// <typeparam name="T">The Type of <see cref="Tag{T}"/></typeparam>
+  public readonly struct Tags<T> : IEnumerable<T> where T : Tag<T>
   {
 
     private readonly uint _value;
@@ -24,6 +29,8 @@ namespace Watchables
         _value |= tag.Mask;
       }
     }
+
+    public static implicit operator Tags<T>(T tag) => new Tags<T>(tag);
 
     /// <inheritdoc cref="With(T)"/>
     public static Tags<T> operator +(Tags<T> tags, T tag) => tags.With(tag);
@@ -94,15 +101,27 @@ namespace Watchables
     public readonly List<T> ToList()
     {
       List<T> resl = new();
+      foreach(T tag in this)
+      {
+        resl.Add(tag);
+      }
+      return resl;
+    }
+
+    /// <inheritdoc/>
+    public IEnumerator<T> GetEnumerator()
+    {
       foreach(T tag in Tag<T>.AllTags)
       {
         if(Has(tag))
         {
-          resl.Add(tag);
+          yield return tag;
         }
       }
-      return resl;
     }
+
+    /// <inheritdoc/>
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc/>
     public override readonly bool Equals(object obj)
@@ -120,12 +139,9 @@ namespace Watchables
     {
       if(IsNone) { return "None";  }
       string resl = "";
-      foreach(T tag in Tag<T>.AllTags)
+      foreach(T tag in this)
       {
-        if(Has(tag))
-        {
-          resl += (tag + ", ");
-        }
+        resl += (tag + ", ");
       }
       return resl.TrimEnd(',', ' ');
     }

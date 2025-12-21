@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Watchables
 {
   /// <summary>
-  /// A strongly-typed, extensible 32-bit <see cref="Enum"/> alternative that provides named singleton identities
+  /// A strongly-typed, extensible 32 value <see cref="Enum"/> alternative that provides named singleton identities
   /// with stable indices and bitmask values for use in generic and composable systems.
   /// The <see cref="Tags{T}"/> companion struct can provide <see cref="FlagsAttribute"/> behavior for implementations of this type.
   /// </summary>

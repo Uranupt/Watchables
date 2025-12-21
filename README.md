@@ -84,7 +84,7 @@ Implementations for performing operations on numeric values. Uses `IEnforceNumer
 - `CompositeLibrary<TKey, TValue>` is a signature shortening version of `CompositeLibrary<TKey, TComp, TPart>` for `CompositeWatchable<T>`. For more information, see the Composite section
 
 ### Composites
-Composites are abstract bases for a pattern of Composite and Part Type pairs, where the Composite is defined by the Parts it contains.
+Composites are abstract bases for a pattern of Composite and Part Type pairs, where the Composite value is defined by the Parts it contains.
 
 - `CompositePartBase<TSelf>` and `CompositePartBase<TValue, TSelf>` are the unvalued and valued base classes for the Part half of the Type pair. They are not `IWatchable` themselves, but the `ValueSource` of the valued version can be, and `CompositeBase<TValue, TPart>` accounts for this, updating or removing automatically
 - `CompositeBase<TPart>` and `CompositeBase<TValue, TPart>` are the unvalued and valued base classes for the Composite half of the Type pair. You must define sorting behavior yourself via `Sort` when you derive, including if you want to respect the `CompositePartPriority` values of the Parts
@@ -99,3 +99,16 @@ The Watchables system is built to be extensible, flexible, and easy to abstract.
 - `NestedWatchable<T>` extends `WatchableBase<T>` and provides helpful methods and logic for Types which base their values on other `IWatchable` instances
 - `SealableBase` extends `OwnableBase` and provides common implementation for `ISealable`
 - `SealableNestedBase<T>` extends `NestedWatchable<T>` and provides implementation for `ISealable`
+
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
+
+## Project Future
+I don't currently have time to make major updates to the project, but will likely add periodic small tweaks and updates when something occurs to me. When / if I have the time, there's some features I'm interested in adding, such as:
+- Debouncing layers
+- Async framework
+- Lazy nested types (won't listen for or supply updates, only evaluated on retrieval)
+- Debuging tools
+- Serialization tools
+
+Project is entirely open source, I'm not possesive of it; use it, change it, redistribute it as you like.

@@ -1166,9 +1166,6 @@
         <member name="M:Watchables.Tags`1.op_OnesComplement(Watchables.Tags{`0})">
             <inheritdoc cref="M:Watchables.Tags`1.Invert"/>
         </member>
-        <member name="M:Watchables.Tags`1.op_Equality(Watchables.Tags{`0},`0)">
-            <summary> Determines if the current {</summary>
-        </member>
         <member name="M:Watchables.Tags`1.With(`0)">
             <summary> Returns a version of the current <see cref="T:Watchables.Tags`1"/> which also contains the given <paramref name="tag"/>. </summary>
         </member>
@@ -1294,8 +1291,9 @@
         </member>
         <member name="M:Watchables.Tag`1.GetDefinedNames(System.Span{System.String})">
             <summary>
-            This method is used to define the implementation's defined names, in the intended order, and then return the number of names.
-            May not exceed 32 values. It is recommended to create static
+            This method is used to define the implementation's names, in the intended order, and then return the number of names.
+            May not exceed 32 values. 
+            <br/>It is recommended to create static
             <typeparamref name="TSelf"/> properties in the implementation which call <see cref="M:Watchables.Tag`1.Get(System.String)"/> matching each of these names.
             </summary>
             <param name="names"> The <see cref="T:System.Span`1"/> to fill with defined names. </param>

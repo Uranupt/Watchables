@@ -46,7 +46,6 @@ namespace Watchables
     /// <inheritdoc cref="Invert()"/>
     public static Tags<T> operator ~(Tags<T> tags) => tags.Invert();
 
-    /// <summary> Determines if the current {</summary>
     public static bool operator ==(Tags<T> tags, T tag) => tags._value == tag.Mask;
     public static bool operator !=(Tags<T> tags, T tag) => tags._value != tag.Mask;
     public static bool operator ==(Tags<T> tags, Tags<T> other) => tags.HasExactly(other);

@@ -165,8 +165,9 @@ namespace Watchables
     public override string ToString() => Name;
 
     /// <summary>
-    /// This method is used to define the implementation's defined names, in the intended order, and then return the number of names.
-    /// May not exceed 32 values. It is recommended to create static
+    /// This method is used to define the implementation's names, in the intended order, and then return the number of names.
+    /// May not exceed 32 values. 
+    /// <br/>It is recommended to create static
     /// <typeparamref name="TSelf"/> properties in the implementation which call <see cref="Get"/> matching each of these names.
     /// </summary>
     /// <param name="names"> The <see cref="Span{T}"/> to fill with defined names. </param>

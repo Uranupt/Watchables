@@ -2163,6 +2163,43 @@
         <member name="P:Watchables.ConversionWrapper`2.Value">
             <inheritdoc/>
         </member>
+        <member name="T:Watchables.FormatStringWatchable">
+            <summary>
+            An <see cref="T:Watchables.IWatchable`1"/> implementation whose value is the result of <see cref="M:System.String.Format(System.String,System.Object[])"/>
+            performed with a given format string and array of inputs. Will automatically update from any <see cref="T:Watchables.IWatchable"/> inputs. 
+            </summary>
+        </member>
+        <member name="M:Watchables.FormatStringWatchable.#ctor(System.String,System.Object[])">
+            <summary>
+            Default constructor which does not allow for replacement on destruction of <see cref="T:Watchables.IWatchable"/> <paramref name="inputs"/>. If any supplied <paramref name="inputs"/> are
+            already destroyed, the <see cref="T:Watchables.FormatStringWatchable"/> will immediately destroy itself.
+            </summary>
+        </member>
+        <member name="M:Watchables.FormatStringWatchable.#ctor(System.String,System.String,System.Object[])">
+            <summary>
+            Constructor which allows specification for a <see cref="T:System.String"/> to be used as a <paramref name="replacement"/> for destroyed <see cref="T:Watchables.IWatchable"/> inputs.
+            </summary>
+        </member>
+        <member name="M:Watchables.FormatStringWatchable.#ctor(System.String,System.ValueTuple{System.Object,System.String}[])">
+            <summary>
+            Constructor which allows specification of <see cref="T:System.String"/>s to be used as replacements for their paired inputs if they are <see cref="T:Watchables.IWatchable"/> and become destroyed.
+            </summary>
+        </member>
+        <member name="M:Watchables.FormatStringWatchable.CheckFatalDestruction(Watchables.IWatchable)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.FormatStringWatchable.Evaluate">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.FormatStringWatchable.OnNonFatalDestruction(Watchables.IWatchable)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.FormatStringWatchable.BeforeDestroyed">
+            <inheritdoc/>
+        </member>
+        <member name="M:Watchables.FormatStringWatchable.ClearValue">
+            <inheritdoc/>
+        </member>
         <member name="T:Watchables.ReadOnlyWatchable`1">
             <summary>
             Read-only wrapper for <see cref="T:Watchables.IWatchable`1"/> instances which has identical value, lifetime, and change propagation.

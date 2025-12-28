@@ -50,6 +50,7 @@ Core, simple implementations
 - `ConversionWrapper<TSource, TValue>` and `ConversionWatchable<TSource, TValue>` allow conversion between any `IConvertible` Types
 - `Requestable` allows objects to 'request' an inversion of the default `bool` state provided at construction.
 - `StringChain` builds a `string` from provided inputs in a set order. Will automatically update from any provided `IWatchable` inputs
+- `FormatStringWatchable` builds a `string` from a provided format string and an array of inputs. Will automatically update from any provided `IWatchable` inputs
 
 **Tip:** You can easily wrap any value with the extension methods `Wrap` and `WrapMutable` called on the value, returning a new `ReadOnlyWrapper<T>` or `BasicWrapper<T>` respectively.
 

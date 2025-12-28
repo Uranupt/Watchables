@@ -18,7 +18,7 @@ namespace Watchables
 		public static implicit operator T(WatchableBase<T> watchable) => watchable.Value;
 
 		/// <summary> Returns a string representation of the underlying value. </summary>
-		public override string ToString() => Value.ToString();
+		public override string ToString() => Value is null ? "null" : Value.ToString();
 
     /// <inheritdoc/>
 		public ReadOnlyWatchable<T> AsReadOnly() => _readOnlyWrapper ??= new(this);

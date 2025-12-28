@@ -177,6 +177,8 @@ namespace Watchables
       _requiredInputs.Clear();
     }
 
+    protected override void ClearValue() => Value = "";
+
     /// <inheritdoc/>
     protected override void OnNonFatalDestruction(IWatchable dependency)
     {
